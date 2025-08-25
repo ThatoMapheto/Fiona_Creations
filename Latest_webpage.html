@@ -1,0 +1,1734 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fiona Creations | Luxury Dress Rentals & Custom Designs</title>
+    <style>
+        :root {
+            --primary: #f8e1e4;
+            --secondary: #5e2c3e;
+            --accent: #d4a5a5;
+            --text: #333333;
+            --light: #ffffff;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Playfair Display', serif;
+        }
+
+        body {
+            color: var(--text);
+            line-height: 1.6;
+        }
+
+        header {
+            background-color: var(--light);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 5%;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .logo {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--secondary);
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: var(--text);
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+
+        .nav-links a:hover {
+            color: var(--secondary);
+        }
+
+        .mobile-menu-btn {
+            display: none;
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+
+        .hero {
+            background: linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.4)), url('./Images/Background1.jpg');
+            background-size: cover;
+            background-position: center;
+            height: 80vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            color: var(--light);
+            padding: 0 1rem;
+        }
+
+        .hero h1 {
+            font-size: 3.5rem;
+            margin-bottom: 1rem;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+        }
+
+        .hero p {
+            font-size: 1.2rem;
+            max-width: 700px;
+            margin-bottom: 2rem;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+        }
+
+        .btn {
+            display: inline-block;
+            background-color: var(--secondary);
+            color: var(--light);
+            padding: 0.8rem 1.8rem;
+            border-radius: 30px;
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s;
+            border: 2px solid var(--secondary);
+            cursor: pointer;
+        }
+
+        .btn:hover {
+            background-color: transparent;
+            color: var(--secondary);
+        }
+
+        .btn-outline {
+            background-color: transparent;
+            color: var(--secondary);
+            border: 2px solid var(--secondary);
+        }
+
+        .btn-outline:hover {
+            background-color: var(--secondary);
+            color: var(--light);
+        }
+
+        section {
+            padding: 5rem 5%;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .section-title {
+            text-align: center;
+            margin-bottom: 3rem;
+            color: var(--secondary);
+        }
+
+        .section-title h2 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .services-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+
+        .service-card {
+            background-color: var(--light);
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s;
+        }
+
+        .service-card:hover {
+            transform: translateY(-10px);
+        }
+
+        .service-img {
+            height: 250px;
+            overflow: hidden;
+        }
+
+        .service-img img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.5s;
+        }
+
+        .service-card:hover .service-img img {
+            transform: scale(1.1);
+        }
+
+        .service-content {
+            padding: 1.5rem;
+        }
+
+        .service-content h3 {
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+            color: var(--secondary);
+        }
+
+        .gallery {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+
+        .gallery-item {
+            height: 300px;
+            overflow: hidden;
+            border-radius: 5px;
+            position: relative;
+        }
+
+        .gallery-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.5s;
+        }
+
+        .gallery-item:hover img {
+            transform: scale(1.05);
+        }
+
+        .gallery-overlay {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: linear-gradient(to top, rgba(0, 0, 0, 0.7), transparent);
+            color: white;
+            padding: 1rem;
+            transform: translateY(100%);
+            transition: transform 0.3s;
+        }
+
+        .gallery-item:hover .gallery-overlay {
+            transform: translateY(0);
+        }
+
+        .testimonials {
+            background-color: var(--primary);
+            padding: 5rem 5%;
+        }
+
+        .testimonial-slider {
+            max-width: 800px;
+            margin: 0 auto;
+            text-align: center;
+        }
+
+        .testimonial {
+            display: none;
+            padding: 2rem;
+        }
+
+        .testimonial.active {
+            display: block;
+        }
+
+        .testimonial-text {
+            font-size: 1.2rem;
+            font-style: italic;
+            margin-bottom: 1.5rem;
+        }
+
+        .testimonial-author {
+            font-weight: 700;
+        }
+
+        .slider-dots {
+            display: flex;
+            justify-content: center;
+            margin-top: 2rem;
+            gap: 0.5rem;
+        }
+
+        .dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background-color: var(--accent);
+            cursor: pointer;
+            opacity: 0.5;
+            transition: opacity 0.3s;
+        }
+
+        .dot.active {
+            opacity: 1;
+        }
+
+        .contact-form {
+            max-width: 600px;
+            margin: 0 auto;
+            background-color: var(--light);
+            padding: 2rem;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+        }
+
+        .form-group input,
+        .form-group textarea,
+        .form-group select {
+            width: 100%;
+            padding: 0.8rem;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 1rem;
+        }
+
+        .form-group textarea {
+            height: 150px;
+            resize: vertical;
+        }
+
+        footer {
+            background-color: var(--secondary);
+            color: var(--light);
+            padding: 3rem 5%;
+            text-align: center;
+        }
+
+        .footer-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            text-align: left;
+        }
+
+        .footer-column h3 {
+            font-size: 1.3rem;
+            margin-bottom: 1.5rem;
+            position: relative;
+            padding-bottom: 0.5rem;
+        }
+
+        .footer-column h3::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 50px;
+            height: 2px;
+            background-color: var(--accent);
+        }
+
+        .footer-column ul {
+            list-style: none;
+        }
+
+        .footer-column ul li {
+            margin-bottom: 0.8rem;
+        }
+
+        .footer-column ul li a {
+            color: var(--light);
+            text-decoration: none;
+            transition: color 0.3s;
+            opacity: 0.8;
+        }
+
+        .footer-column ul li a:hover {
+            opacity: 1;
+        }
+
+        .social-links {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .social-links a {
+            color: var(--light);
+            font-size: 1.5rem;
+            transition: color 0.3s;
+        }
+
+        .social-links a:hover {
+            color: var(--accent);
+        }
+
+        .copyright {
+            margin-top: 3rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        /* Mobile styles */
+        @media (max-width: 768px) {
+            .nav-links {
+                display: none;
+                position: absolute;
+                top: 70px;
+                left: 0;
+                right: 0;
+                background-color: var(--light);
+                flex-direction: column;
+                padding: 2rem;
+                box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
+            }
+
+            .nav-links.active {
+                display: flex;
+            }
+
+            .mobile-menu-btn {
+                display: block;
+            }
+
+            .hero h1 {
+                font-size: 2.5rem;
+            }
+
+            section {
+                padding: 3rem 5%;
+            }
+
+            .section-title h2 {
+                font-size: 2rem;
+            }
+        }
+
+        /* Modal styles */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0, 0, 0, 0.7);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            background-color: var(--light);
+            padding: 2rem;
+            border-radius: 10px;
+            max-width: 500px;
+            width: 90%;
+            max-height: 90vh;
+            overflow-y: auto;
+            position: relative;
+        }
+
+        .close-modal {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            font-size: 1.5rem;
+            cursor: pointer;
+            background: none;
+            border: none;
+        }
+
+        /* Booking form styles */
+        .booking-steps {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 2rem;
+            position: relative;
+        }
+
+        .booking-steps::before {
+            content: '';
+            position: absolute;
+            top: 15px;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background-color: #ddd;
+            z-index: 1;
+        }
+
+        .step {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            z-index: 2;
+        }
+
+        .step-number {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            background-color: #ddd;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 0.5rem;
+            font-weight: bold;
+        }
+
+        .step.active .step-number {
+            background-color: var(--secondary);
+            color: white;
+        }
+
+        .step.completed .step-number {
+            background-color: var(--accent);
+            color: white;
+        }
+
+        .step-text {
+            font-size: 0.8rem;
+            text-align: center;
+        }
+
+        .booking-form-page {
+            display: none;
+        }
+
+        .booking-form-page.active {
+            display: block;
+        }
+
+        .form-navigation {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 2rem;
+        }
+
+        /* Dress preview modal */
+        .dress-preview {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+        }
+
+        .dress-preview-img {
+            height: 400px;
+            overflow: hidden;
+            border-radius: 5px;
+        }
+
+        .dress-preview-img img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .dress-details h3 {
+            font-size: 1.8rem;
+            margin-bottom: 1rem;
+            color: var(--secondary);
+        }
+
+        .dress-details .price {
+            font-size: 1.5rem;
+            font-weight: bold;
+            margin: 1rem 0;
+            color: var(--secondary);
+        }
+
+        .dress-specs {
+            margin: 1.5rem 0;
+        }
+
+        .dress-specs li {
+            margin-bottom: 0.5rem;
+            list-style-type: none;
+            display: flex;
+        }
+
+        .dress-specs li::before {
+            content: '•';
+            margin-right: 0.5rem;
+            color: var(--secondary);
+        }
+
+        .availability {
+            display: inline-block;
+            padding: 0.3rem 0.8rem;
+            background-color: #e8f5e9;
+            color: #2e7d32;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            margin-bottom: 1rem;
+        }
+
+        @media (max-width: 768px) {
+            .dress-preview {
+                grid-template-columns: 1fr;
+            }
+
+            .dress-preview-img {
+                height: 300px;
+            }
+        }
+
+        /* --- About Section --- */
+        .about-content {
+            display: flex;
+            align-items: center;
+            gap: 2rem;
+        }
+
+        .about-text {
+            flex: 1;
+        }
+
+        .about-text h2 {
+            text-align: left;
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #5e2c3e;
+            margin-bottom: 0.5rem;
+        }
+
+        .about-text .tagline {
+            font-size: 1.1rem;
+            font-style: italic;
+            color: #777;
+            margin-bottom: 1.5rem;
+            max-width: 600px;
+        }
+
+        /* Image */
+        .about-image {
+            flex: 1;
+        }
+
+        .about-image img {
+            width: 100%;
+            border-radius: 10px;
+            object-fit: cover;
+        }
+
+        /* Responsive stacking */
+        @media (max-width: 768px) {
+            nav {
+                flex-direction: column;
+                padding: 1rem;
+                text-align: center;
+                background-color: var(--light);
+                box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+                position: sticky;
+                top: 0;
+                z-index: 100;
+            }
+
+            .about-content {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .about-text h2 {
+                text-align: center;
+            }
+
+            .about-text .tagline {
+                margin: 0 auto 1.5rem;
+            }
+
+            .about-image {
+                margin-top: 1.5rem;
+            }
+        }
+
+        .about-intro {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .about-title {
+            font-size: 2rem;
+            font-weight: 600;
+            color: #5e2c3e;
+            margin-bottom: 0.5rem;
+        }
+
+        .about-tagline {
+            font-size: 1.1rem;
+            font-style: italic;
+            color: #777;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        /* Ready to Wear Section Styles */
+        #ready-to-wear {
+            padding: 5rem 5%;
+            background-color: var(--light);
+        }
+
+        .ready-to-wear-container {
+            display: flex;
+            flex-direction: column;
+            gap: 3rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        /* Grid layout for ready-to-wear items */
+        .ready-to-wear-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .ready-to-wear-card {
+            background-color: var(--light);
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s;
+        }
+
+        .ready-to-wear-card:hover {
+            transform: translateY(-10px);
+        }
+
+        .ready-to-wear-img {
+            height: 250px;
+            overflow: hidden;
+        }
+
+        .ready-to-wear-img img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.5s;
+        }
+
+        .ready-to-wear-card:hover .ready-to-wear-img img {
+            transform: scale(1.1);
+        }
+
+        .ready-to-wear-content {
+            padding: 1.5rem;
+        }
+
+        .ready-to-wear-content h3 {
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+            color: var(--secondary);
+        }
+
+        .ready-to-wear-price {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: var(--secondary);
+            margin-bottom: 0.5rem;
+        }
+
+        .get-this-look-btn {
+            margin-top: 1rem;
+            width: 100%;
+        }
+    </style>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Montserrat:wght@300;400;500&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+
+<body>
+    <header>
+        <nav>
+            <div class="logo">Fiona Creations</div>
+            <button class="mobile-menu-btn" id="mobileMenuBtn">
+                <i class="fas fa-bars"></i>
+            </button>
+            <div class="nav-links" id="navLinks">
+                <a href="#home">Home</a>
+                <a href="#about">About</a>
+                <a href="#services">Services</a>
+                <a href="#ready-to-wear">Ready to wear</a>
+                <a href="#gallery">Gallery</a>
+                <a href="#contact">Contact</a>
+                <a href="#" id="bookNowBtn">Book Now</a>
+            </div>
+        </nav>
+    </header>
+
+    <section class="hero" id="home">
+        <h1>Elegant Event Wear for Your Special Occasion</h1>
+        <p>Rent stunning dresses or have one custom-made - look your best without the commitment of purchase</p>
+        <div>
+            <a href="#services" class="btn">Our Services</a>
+            <a href="#" class="btn btn-outline" id="heroBookBtn">Book Consultation</a>
+        </div>
+    </section>
+
+    <section class="section" id="about">
+        <div class="section-title">
+            <h2>About Fiona Creations</h2>
+        </div>
+
+        <div class="about-content">
+            <div class="about-img">
+                <img src="./Images/Background3.jpg" width="350" alt="Fiona">
+            </div>
+            <div class="about-text">
+                <div class="about-text">
+                    <h2>The Fiona Creations Experience </h2>
+
+                    <p>Our mission is to make high-end, bespoke fashion accessible and sustainable.
+                        Fiona Creations is a Pretoria-based fashion brand dedicated to redefining elegance for
+                        life’s most special moments.
+                        We specialize in luxury dress rentals, custom-made gowns,
+                        and personal styling services designed exclusively for women attending weddings and formal
+                        events.</p>
+                    <p>Our clientele includes brides, bridesmaids, and female wedding guests who value both style
+                        and convenience.
+                        To make the experience effortless, we also offer a premium out-of-office styling service,
+                        bringing fittings and consultations directly to you — whether at home, your office, or your
+                        event venue.</p>
+                    <p>
+                    </p>
+                    <p>Beyond style, our mission is rooted in sustainability. By promoting re-wearable fashion and
+                        eco-conscious practices,
+                        we aim to reduce waste in the fashion industry while making luxury more accessible.
+                        Every piece in our collection is thoughtfully crafted and maintained with care, ensuring
+                        that each gown carries a story of elegance and responsibility.</p>
+                </div>
+    </section>
+
+    <section id="services">
+        <div class="section-title">
+            <h2>Our Services</h2>
+            <p>We make luxury event wear accessible through our curated services</p>
+        </div>
+        <div class="services-grid">
+            <div class="service-card">
+                <div class="service-img">
+                    <img src="./Images/3. Mmudi the dress/3.jpg" alt="Dress Rentals">
+                </div>
+                <div class="service-content">
+                    <h3>Dress Rentals</h3>
+                    <p>Stunning bridal, bridesmaid, and evening wear available for rent at a fraction of retail price.
+                    </p>
+                    <a href="#" class="btn btn-outline view-dress-btn" style="margin-top: 1rem;">View rentals</a>
+                </div>
+            </div>
+            <div class="service-card">
+                <div class="service-img">
+                    <img src="./Images/1. Bridal (no name)/2.PNG" alt="Custom-Made Dresses">
+                </div>
+                <div class="service-content">
+                    <h3>Custom-Made Dresses</h3>
+                    <p>Custom designs crafted just for you, combining a flawless fit with a one-of-a-kind style.</p>
+                    <a href="#" class="btn btn-outline book-service-btn" data-service="custom"
+                        style="margin-top: 1rem;">Book Consultation</a>
+                </div>
+            </div>
+            <div class="service-card">
+                <div class="service-img">
+                    <img src="./Images/Personal Styling.jpg" alt="Personal Styling">
+                </div>
+                <div class="service-content">
+                    <h3>Personal Styling</h3>
+                    <p>Out-of-office styling service at your home, venue, or with your bridal party.</p>
+                    <a href="#" class="btn btn-outline book-service-btn" data-service="styling"
+                        style="margin-top: 1rem;">Book Service</a>
+                </div>
+            </div>
+            <div class="service-card">
+                <div class="service-img">
+                    <img src="./Images/2. Poppy the dress/1.PNG" alt="Dress Rentals">
+                </div>
+                <div class="service-content">
+                    <h3>Ready to wear</h3>
+                    <p>Beautiful ready-to-wear looks available for every occasion.
+                    </p>
+                    <a href="#ready-to-wear" class="btn btn-outline" style="margin-top: 1rem;">View collection</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    </section id="services">
+    <div class="section-title">
+        <h2>Our Rentals</h2>
+        <p>We have stunning bridal, bridesmaid, and evening wear available for rent at a fraction of retail price.</p>
+    </div>
+    <div class="services-grid">
+
+        <!--Dress 1 -->
+        <div class="service-card">
+            <div class="service-img">
+                <img src="/Assets/Images/3. Mmudi the dress/4.jpg" alt="Mmudi the dress">
+            </div>
+            <div class="service-content">
+                <h3>Mmudi the dress</h3>
+                <p>Elegant A-line bridesmaid dress with delicate lace detailing.
+                </p>
+                <button class="btn btn-outline view-dress-btn" data-dress="Mmudi the dress" data-price="R1,000"
+                    data-image="/Assets/Images/3. Mmudi the dress/4.jpg"
+                    data-desc="A stunning A-line bridesmaid dress with delicate lace detailing, perfect for weddings and formal events."
+                    data-specs="Available in sizes 4-16|Ivory with silver thread|Rental period: 5 days|Dry cleaning included">
+                    Reserve Dress
+                </button>
+            </div>
+        </div>
+
+        <!--Dress 2 -->
+        <div class="service-card">
+            <div class="service-img">
+                <img src="/Assets/Images/1. Bridal (no name)/1.PNG" alt="Custom Bridal">
+            </div>
+            <div class="service-content">
+                <h3>Custom Bridal</h3>
+                <p>Bridal gown with detachable overskirt for versatile styling.
+                </p>
+                <button class="btn btn-outline view-dress-btn" data-dress="Custom Bridal" data-price="R5,500/R4,500"
+                    data-image="/Assets/Images/1. Bridal (no name)/1.PNG"
+                    data-desc="Exquisite bridal gown with detachable overskirt offering two looks in one dress."
+                    data-specs="Custom sizing available|Ivory satin with lace|Detachable train|Made-to-order">
+                    Reserve Dress
+                </button>
+            </div>
+        </div>
+
+        <!--Dress 3 -->
+        <div class="service-card">
+            <div class="service-img">
+                <img src="/Assets/Images/4. Morero the dress/2.PNG" alt="Morero the dress">
+            </div>
+            <div class="service-content">
+                <h3>Morero the dress</h3>
+                <p>Show-stopping mermaid gown with hand-sewn beadwork.
+                </p>
+                <button class="btn btn-outline view-dress-btn" data-dress="Morero the dress" data-price="R1,000"
+                    data-image="/Assets/Images/4. Morero the dress/2.PNG"
+                    data-desc="A show-stopping mermaid gown featuring hand-sewn beadwork and a dramatic train."
+                    data-specs="Sizes 6-18|Champagne color|Includes detachable train|5-day rental">
+                    Reserve Dress
+                </button>
+            </div>
+        </div>
+
+        <!--Dress 4 -->
+        <div class="service-card">
+            <div class="service-img">
+                <img src="/Assets/Images/5. Blue berry/4.jpg" alt="Blue berry">
+            </div>
+            <div class="service-content">
+                <h3>Blue berry</h3>
+                <p>Elegant navy blue evening gown with flowing silhouette.
+                </p>
+                <button class="btn btn-outline view-dress-btn" data-dress="Blue berry" data-price="R900"
+                    data-image="/Assets/Images/5. Blue berry/4.jpg"
+                    data-desc="A sophisticated navy blue gown perfect for formal events and galas."
+                    data-specs="Sizes 6-14|Navy blue chiffon|Sweep train|4-day rental">
+                    Reserve Dress
+                </button>
+            </div>
+        </div>
+
+        <!--Dress 5 -->
+        <div class="service-card">
+            <div class="service-img">
+                <img src="/Assets/Images/7. Cherry/1.PNG" alt="Cherry">
+            </div>
+            <div class="service-content">
+                <h3>Cherry</h3>
+                <p>Feminine dream with soft ruffles and off-shoulder neckline.
+                </p>
+                <button class="btn btn-outline view-dress-btn" data-dress="Cherry" data-price="R700"
+                    data-image="/Assets/Images/7. Cherry/1.PNG"
+                    data-desc="A feminine dream with soft ruffles and an off-shoulder neckline that flatters every figure."
+                    data-specs="Sizes 2-12|Blush pink|Sweep train|5-day rental">
+                    Reserve Dress
+                </button>
+            </div>
+        </div>
+
+        <!--Dress 6 -->
+        <div class="service-card">
+            <div class="service-img">
+                <img src="/Assets/Images/6. Cherry on top/2.PNG " alt="Cherry on top">
+            </div>
+            <div class="service-content">
+                <h3>Cherry on top</h3>
+                <p>Playful yet elegant high-low hem cocktail dress.
+                </p>
+                <button class="btn btn-outline view-dress-btn" data-dress="Cherry on top" data-price="R900"
+                    data-image="/Assets/Images/6. Cherry on top/2.PNG"
+                    data-desc="Playful yet elegant high-low hem dress perfect for rehearsal dinners and cocktail parties."
+                    data-specs="Sizes XS-L|Cherry red|Stretch fabric|3-day rental">
+                    Reserve Dress
+                </button>
+            </div>
+        </div>
+
+        <!--Dress 7 -->
+        <div class="service-card">
+            <div class="service-img">
+                <img src="/Assets/Images/11. Poppy the dress 2.0/1.PNG" alt="Poppy the dress 2.0">
+            </div>
+            <div class="service-content">
+                <h3>Poppy the dress 2.0</h3>
+                <p>Updated ballgown with illusion details and modern lines.
+                </p>
+                <button class="btn btn-outline view-dress-btn" data-dress="Poppy the dress 2.0" data-price="R950"
+                    data-image="/Assets/Images/11. Poppy the dress 2.0/1.PNG"
+                    data-desc="An updated version of our signature ballgown with illusion details and modern lines."
+                    data-specs="Sizes 2-18|Pure white|Detachable sleeves|7-day rental">
+                    Reserve Dress
+                </button>
+            </div>
+        </div>
+
+        <!--Dress 8 -->
+        <div class="service-card">
+            <div class="service-img">
+                <img src="/Assets/Images/8. Rental (no name)/2.jpg" alt="Classic Rental">
+            </div>
+            <div class="service-content">
+                <h3>Classic Rental</h3>
+                <p>Timeless silhouette for weddings, galas, and black-tie events.
+                </p>
+                <button class="btn btn-outline view-dress-btn" data-dress="Classic Rental" data-price="R800"
+                    data-image="/Assets/Images/8. Rental (no name)/2.jpg"
+                    data-desc="A timeless silhouette that works for weddings, galas, and black-tie events."
+                    data-specs="Sizes 6-16|Navy blue|Stretch chiffon|3-day rental">
+                    Reserve Dress
+                </button>
+            </div>
+        </div>
+
+        <!--Dress 9 -->
+        <div class="service-card">
+            <div class="service-img">
+                <img src="/Assets/Images/9. Rental - size 26-30 (no name)/1.PNG" alt="Black Evening Gown">
+            </div>
+            <div class="service-content">
+                <h3>Black Evening Gown</h3>
+                <p>Sophisticated black gown for formal occasions.
+                </p>
+                <button class="btn btn-outline view-dress-btn" data-dress="Black Evening Gown" data-price="R850"
+                    data-image="/Assets/Images/9. Rental - size 26-30 (no name)/1.PNG"
+                    data-desc="Elegant black evening gown with flattering silhouette and luxurious fabric."
+                    data-specs="Sizes 26-30|Jet black|Satin fabric|4-day rental">
+                    Reserve Dress
+                </button>
+            </div>
+        </div>
+
+        <!--Dress 10 -->
+        <div class="service-card">
+            <div class="service-img">
+                <img src="/Assets/Images/10. Mmudi the dress (size 38-40)/1.PNG" alt="Mmudi the dress 2.0">
+            </div>
+            <div class="service-content">
+                <h3>Mmudi the dress 2.0</h3>
+                <p>Beautiful lace detailing in extended sizes with support features.
+                </p>
+                <button class="btn btn-outline view-dress-btn" data-dress="Mmudi the dress 2.0" data-price="R1,200"
+                    data-image="/Assets/Images/10. Mmudi the dress (size 38-40)/1.PNG"
+                    data-desc="The same beautiful lace detailing in sizes 38-40, with additional support features."
+                    data-specs="Sizes 38-40|Ivory with silver|Built-in shapewear|5-day rental">
+                    Reserve Dress
+                </button>
+            </div>
+        </div>
+    </div>
+    </section>
+
+    <!-- Ready to Wear Section -->
+    <section id="ready-to-wear">
+        <div class="section-title">
+            <h2>Ready to Wear Collection</h2>
+            <p>Beautiful ready-to-wear looks available for every occasion</p>
+        </div>
+
+        <div class="ready-to-wear-grid">
+            <!-- Seipati the Dress -->
+            <div class="ready-to-wear-card">
+                <div class="ready-to-wear-img">
+                    <img src="./Images/12. Seipati the dress/1.PNG" alt="Seipati the dress">
+                </div>
+                <div class="ready-to-wear-content">
+                    <h3>Seipati the dress</h3>
+                    <div class="ready-to-wear-price">R1,200</div>
+                    <p>Celebration of heritage with contemporary styling, perfect for cultural weddings.</p>
+                    <button class="btn btn-outline get-this-look-btn" data-dress="Seipati the dress" data-price="R1,200"
+                        data-image="./Images/12. Seipati the dress/1.PNG"
+                        data-desc="A celebration of heritage with contemporary styling, perfect for cultural weddings."
+                        data-specs="Sizes 6–22|Gold and cream|Hand-beaded details|6-day rental">
+                        Get This Look
+                    </button>
+                </div>
+            </div>
+
+            <!-- Poppy the Dress -->
+            <div class="ready-to-wear-card">
+                <div class="ready-to-wear-img">
+                    <img src="./Images/2. Poppy the dress/1.PNG" alt="Poppy the dress">
+                </div>
+                <div class="ready-to-wear-content">
+                    <h3>Poppy the dress</h3>
+                    <div class="ready-to-wear-price">R1,200</div>
+                    <p>Celebration of heritage with contemporary styling.</p>
+                    <button class="btn btn-outline get-this-look-btn" data-dress="Poppy the dress" data-price="R1,200"
+                        data-image="./Images/2. Poppy the dress/1.PNG"
+                        data-desc="Celebration of heritage with contemporary styling."
+                        data-specs="Sizes 6–22|Gold and cream|Hand-beaded details|6-day rental">
+                        Get This Look
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="gallery">
+        <div class="section-title">
+            <h2>Our Work</h2>
+            <p>Browse through our recent creations and happy clients</p>
+        </div>
+        <div class="gallery">
+            <div class="gallery-item">
+                <img src="./Images/10. Mmudi the dress (size 38-40)/1.PNG" alt="Bridal Gown">
+                <div class="gallery-overlay">
+                    <h3>Mmudi the dress 2.0</h3>
+                    <p>Custom design</p>
+                </div>
+            </div>
+            <div class="gallery-item">
+                <img src="./Images/3. Mmudi the dress/4.jpg" alt="Bridesmaid Dresses">
+                <div class="gallery-overlay">
+                    <h3>Mmudi the dress</h3>
+                    <p>Custom design</p>
+                </div>
+            </div>
+            <div class="gallery-item">
+                <img src="./Images/3. Mmudi the dress/5.jpg" alt="Evening Gown">
+                <div class="gallery-overlay">
+                    <h3>Mmudi the dress</h3>
+                    <p>Custom design</p>
+                </div>
+            </div>
+            <div class="gallery-item">
+                <img src="./Images/10. Mmudi the dress (size 38-40)/3.PNG" alt="Maternity Gown">
+                <div class="gallery-overlay">
+                    <h3>Mmudi the dress 2.0</h3>
+                    <p>Custom design</p>
+                </div>
+            </div>
+            <div class="gallery-item">
+                <img src="./Images/Custom (Black)/1.jpg" alt="Maternity Gown">
+                <div class="gallery-overlay">
+                    <h3>Custom Rental</h3>
+                    <p>Custom design</p>
+                </div>
+            </div>
+            <div class="gallery-item">
+                <img src="./Images/Custom (Black)/2.jpg" alt="Maternity Gown">
+                <div class="gallery-overlay">
+                    <h3>Custom Rental</h3>
+                    <p>Custome design</p>
+                </div>
+            </div>
+            <div class="gallery-item">
+                <img src="./Images/4. Morero the dress/1.PNG" alt="Maternity Gown">
+                <div class="gallery-overlay">
+                    <h3>Morero the dress</h3>
+                    <p>Custom design</p>
+                </div>
+            </div>
+            <div class="gallery-item">
+                <img src="./Images/4. Morero the dress/2.PNG" alt="Maternity Gown">
+                <div class="gallery-overlay">
+                    <h3>Morero the dress</h3>
+                    <p>Custom deign</p>
+                </div>
+            </div>
+            <div class="gallery-item">
+                <img src="./Images/2. Poppy the dress/1.PNG" alt="Maternity Gown">
+                <div class="gallery-overlay">
+                    <h3>Poppy the dress</h3>
+                    <p>Custom deign</p>
+                </div>
+            </div>
+            <div class="gallery-item">
+                <img src="./Images/2. Poppy the dress/2.PNG" alt="Maternity Gown">
+                <div class="gallery-overlay">
+                    <h3>Poppy the dress 2.0</h3>
+                    <p>Custom deign</p>
+                </div>
+            </div>
+            <div class="gallery-item">
+                <img src="./Images/5. Blue berry/4.jpg" alt="Maternity Gown">
+                <div class="gallery-overlay">
+                    <h3>Blue berry</h3>
+                    <p>Custom deign</p>
+                </div>
+            </div>
+            <div class="gallery-item">
+                <img src="./Images/5. Blue berry/1.PNG" alt="Maternity Gown">
+                <div class="gallery-overlay">
+                    <h3>Blue berry</h3>
+                    <p>Custom deign</p>
+                </div>
+            </div>
+    </section>
+    <section class="testimonials">
+        <div class="section-title">
+            <h2>Client Testimonials</h2>
+            <p>What our clients say about their experience</p>
+        </div>
+        <div class="testimonial-slider">
+            <div class="testimonial active">
+                <p class="testimonial-text">"Fiona created the most beautiful custom gown for my wedding. Her attention
+                    to detail and personal service made the entire process so special. I felt like a princess on my big
+                    day!"</p>
+                <p class="testimonial-author">- Thandi M., Bride</p>
+            </div>
+            <div class="testimonial">
+                <p class="testimonial-text">"Renting our bridesmaid dresses from Fiona Creations saved us so much money!
+                    The quality was exceptional and the fit was perfect after minor alterations. Highly recommend!"</p>
+                <p class="testimonial-author">- Nomthandazo S., Bridesmaid</p>
+            </div>
+            <div class="testimonial">
+                <p class="testimonial-text">"The out-of-office styling service was a game changer for our busy bridal
+                    party. Fiona came to our venue and helped all of us look our best with her expert eye and rental
+                    options."</p>
+                <p class="testimonial-author">- Lebo K., Mother of the Bride</p>
+            </div>
+            <div class="slider-dots">
+                <div class="dot active" data-slide="0"></div>
+                <div class="dot" data-slide="1"></div>
+                <div class="dot" data-slide="2"></div>
+            </div>
+        </div>
+    </section>
+
+    <section id="contact">
+        <div class="section-title">
+            <h2>Contact Us</h2>
+            <p>Get in touch to book your consultation or ask any questions</p>
+        </div>
+        <div class="contact-form">
+            <form id="contactForm">
+                <div class="form-group">
+                    <label for="name">Your Name</label>
+                    <input type="text" id="name" name="name" required>
+                </div>
+                <div class="form-group">
+                    <label for="email">Email Address</label>
+                    <input type="email" id="email" name="email" required>
+                </div>
+                <div class="form-group">
+                    <label for="phone">Phone Number</label>
+                    <input type="tel" id="phone" name="phone">
+                </div>
+                <div class="form-group">
+                    <label for="service">Service Interested In</label>
+                    <select id="service" name="service">
+                        <option value="">Select a service</option>
+                        <option value="rental">Dress Rental</option>
+                        <option value="custom">Custom-Made Dress</option>
+                        <option value="styling">Personal Styling</option>
+                        <option value="ready-to-wear">Ready to Wear</option>
+                        <option value="other">Other Inquiry</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="message">Your Message</label>
+                    <textarea id="message" name="message" required></textarea>
+                </div>
+                <button type="submit" class="btn">Send Message</button>
+            </form>
+        </div>
+    </section>
+
+    <footer>
+        <div class="footer-content">
+            <div class="footer-column">
+                <h3>Fiona Creations</h3>
+                <p>Making luxury event wear accessible through curated rentals, bespoke designs, and personal styling
+                    services.</p>
+                <div class="social-links">
+                    <a href="#"><i class="fab fa-tiktok"></i></a>
+                    <a href="#"><i class="fab fa-instagram"></i></a>
+                    <a href="#"><i class="fab fa-facebook"></i></a>
+                </div>
+            </div>
+            <div class="footer-column">
+                <h3>Quick Links</h3>
+                <ul>
+                    <li><a href="#home">Home</a></li>
+                    <li><a href="#services">Services</a></li>
+                    <li><a href="#ready-to-wear">Ready to Wear</a></li>
+                    <li><a href="#gallery">Gallery</a></li>
+                    <li><a href="#about">About</a></li>
+                    <li><a href="#contact">Contact</a></li>
+                </ul>
+            </div>
+            <div class="footer-column">
+                <h3>Contact Info</h3>
+                <ul>
+                    <li><i class="fas fa-map-marker-alt"></i> Pretoria, South Africa</li>
+                    <li><i class="fas fa-phone"></i> 064 373 9810</li>
+                    <li><i class="fas fa-envelope"></i> fionacreations21@gmail.com</li>
+                </ul>
+            </div>
+        </div>
+        <div class="copyright">
+            <p>&copy; 2023 Fiona Creations. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <!-- Booking Modal -->
+    <div class="modal" id="bookingModal">
+        <div class="modal-content">
+            <button class="close-modal" id="closeBookingModal">&times;</button>
+            <h2 style="color: var(--secondary); margin-bottom: 1.5rem;">Book Your Service</h2>
+            <div class="booking-steps">
+                <div class="step active" data-step="1">
+                    <div class="step-number">1</div>
+                    <div class="step-text">Service</div>
+                </div>
+                <div class="step" data-step="2">
+                    <div class="step-number">2</div>
+                    <div class="step-text">Details</div>
+                </div>
+                <div class="step" data-step="3">
+                    <div class="step-number">3</div>
+                    <div class="step-text">Confirm</div>
+                </div>
+            </div>
+
+            <form id="bookingForm">
+                <div class="booking-form-page active" data-page="1">
+                    <h3 style="margin-bottom: 1rem;">Select Service</h3>
+                    <div class="form-group">
+                        <select id="bookingService" name="service" required>
+                            <option value="">Select a service</option>
+                            <option value="rental">Dress Rental</option>
+                            <option value="custom">Custom-Made Dress</option>
+                            <option value="styling">Personal Styling</option>
+                            <option value="ready-to-wear">Ready to Wear</option>
+                        </select>
+                    </div>
+                    <div class="form-navigation">
+                        <button type="button" class="btn btn-outline next-step" data-next="2">Next</button>
+                    </div>
+                </div>
+
+                <div class="booking-form-page" data-page="2">
+                    <h3 style="margin-bottom: 1rem;">Your Information</h3>
+                    <div class="form-group">
+                        <label for="bookingName">Full Name</label>
+                        <input type="text" id="bookingName" name="name" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="bookingEmail">Email</label>
+                        <input type="email" id="bookingEmail" name="email" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="bookingPhone">Phone</label>
+                        <input type="tel" id="bookingPhone" name="phone" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="bookingDate">Preferred Date</label>
+                        <input type="date" id="bookingDate" name="date">
+                    </div>
+                    <div class="form-group">
+                        <label for="bookingNotes">Special Requests</label>
+                        <textarea id="bookingNotes" name="notes"></textarea>
+                    </div>
+                    <div class="form-navigation">
+                        <button type="button" class="btn btn-outline prev-step" data-prev="1">Back</button>
+                        <button type="button" class="btn next-step" data-next="3">Next</button>
+                    </div>
+                </div>
+
+                <div class="booking-form-page" data-page="3">
+                    <h3 style="margin-bottom: 1rem;">Confirm Your Booking</h3>
+                    <div id="bookingSummary" style="margin-bottom: 2rem;">
+                        <!-- Summary will be inserted here by JavaScript -->
+                    </div>
+                    <div class="form-group">
+                        <input type="checkbox" id="agreeTerms" name="agreeTerms" required>
+                        <label for="agreeTerms">I agree to the terms and conditions</label>
+                    </div>
+                    <div class="form-navigation">
+                        <button type="button" class="btn btn-outline prev-step" data-prev="2">Back</button>
+                        <button type="submit" class="btn">Confirm Booking</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Dress Preview Modal -->
+    <div class="modal" id="dressModal">
+        <div class="modal-content">
+            <button class="close-modal" id="closeDressModal">&times;</button>
+            <div class="dress-preview">
+                <div class="dress-preview-img">
+                    <img src="" alt="" id="dressModalImg">
+                </div>
+                <div class="dress-details">
+                    <h3 id="dressModalTitle">Dress Title</h3>
+                    <span class="availability">Available for Rent</span>
+                    <div class="price" id="dressModalPrice">Price</div>
+                    <p id="dressModalDesc">Dress description</p>
+                    <div class="dress-specs">
+                        <h4>Details</h4>
+                        <ul id="dressModalSpecs">
+                            <!-- Specifications will be inserted here by JavaScript -->
+                        </ul>
+                    </div>
+                    <button class="btn book-dress-btn" style="margin-top: 1rem;">Book This Dress</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Success Modal -->
+    <div class="modal" id="successModal">
+        <div class="modal-content" style="text-align: center;">
+            <button class="close-modal" id="closeSuccessModal">&times;</button>
+            <div style="font-size: 5rem; color: var(--secondary); margin-bottom: 1rem;">
+                <i class="fas fa-check-circle"></i>
+            </div>
+            <h2 style="color: var(--secondary); margin-bottom: 1rem;">Booking Confirmed!</h2>
+            <p id="successMessage" style="margin-bottom: 2rem;">Thank you for your booking. We'll contact you shortly to
+                confirm details.</p>
+            <button class="btn" id="closeSuccessBtn">Close</button>
+        </div>
+    </div>
+
+    <script>
+        // Mobile menu toggle
+        const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+        const navLinks = document.getElementById('navLinks');
+
+        mobileMenuBtn.addEventListener('click', () => {
+            navLinks.classList.toggle('active');
+        });
+
+        // Close mobile menu when clicking a link
+        document.querySelectorAll('.nav-links a').forEach(link => {
+            link.addEventListener('click', () => {
+                navLinks.classList.remove('active');
+            });
+        });
+
+        // Testimonial slider
+        const testimonials = document.querySelectorAll('.testimonial');
+        const dots = document.querySelectorAll('.dot');
+
+        dots.forEach(dot => {
+            dot.addEventListener('click', () => {
+                const slideIndex = dot.getAttribute('data-slide');
+
+                testimonials.forEach(testimonial => {
+                    testimonial.classList.remove('active');
+                });
+
+                dots.forEach(d => {
+                    d.classList.remove('active');
+                });
+
+                testimonials[slideIndex].classList.add('active');
+                dot.classList.add('active');
+            });
+        });
+
+        // Auto-advance testimonials
+        let currentTestimonial = 0;
+        setInterval(() => {
+            currentTestimonial = (currentTestimonial + 1) % testimonials.length;
+
+            testimonials.forEach(testimonial => {
+                testimonial.classList.remove('active');
+            });
+
+            dots.forEach(dot => {
+                dot.classList.remove('active');
+            });
+
+            testimonials[currentTestimonial].classList.add('active');
+            dots[currentTestimonial].classList.add('active');
+        }, 5000);
+
+        // Modal functionality
+        const bookingModal = document.getElementById('bookingModal');
+        const dressModal = document.getElementById('dressModal');
+        const successModal = document.getElementById('successModal');
+        const bookNowBtn = document.getElementById('bookNowBtn');
+        const heroBookBtn = document.getElementById('heroBookBtn');
+        const closeBookingModal = document.getElementById('closeBookingModal');
+        const closeDressModal = document.getElementById('closeDressModal');
+        const closeSuccessModal = document.getElementById('closeSuccessModal');
+        const closeSuccessBtn = document.getElementById('closeSuccessBtn');
+        const viewDressBtns = document.querySelectorAll('.view-dress-btn');
+        const bookServiceBtns = document.querySelectorAll('.book-service-btn');
+        const bookDressBtn = document.querySelector('.book-dress-btn');
+
+        // Open booking modal
+        bookNowBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            bookingModal.style.display = 'flex';
+        });
+
+        heroBookBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            bookingModal.style.display = 'flex';
+        });
+
+        bookServiceBtns.forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                e.preventDefault();
+                bookingModal.style.display = 'flex';
+                const service = btn.getAttribute('data-service');
+                document.getElementById('bookingService').value = service === 'custom' ? 'custom' : service === 'styling' ? 'styling' : 'rental';
+            });
+        });
+
+        // Open dress modal and populate with dress data
+        function setupDressModal(buttons, isReadyToWear = false) {
+            buttons.forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    e.preventDefault();
+
+                    // Get dress data from button attributes
+                    const dressName = btn.getAttribute('data-dress');
+                    const dressPrice = btn.getAttribute('data-price');
+                    const dressImage = btn.getAttribute('data-image');
+                    const dressDesc = btn.getAttribute('data-desc');
+                    const dressSpecs = btn.getAttribute('data-specs');
+
+                    // Populate modal with dress data
+                    document.getElementById('dressModalTitle').textContent = dressName;
+                    document.getElementById('dressModalPrice').textContent = dressPrice;
+                    document.getElementById('dressModalImg').src = dressImage;
+                    document.getElementById('dressModalImg').alt = dressName;
+                    document.getElementById('dressModalDesc').textContent = dressDesc;
+
+                    // Clear existing specs
+                    const specsList = document.getElementById('dressModalSpecs');
+                    specsList.innerHTML = '';
+
+                    // Add new specs
+                    const specsArray = dressSpecs.split('|');
+                    specsArray.forEach(spec => {
+                        const li = document.createElement('li');
+                        li.textContent = spec;
+                        specsList.appendChild(li);
+                    });
+
+                    // Change button text for ready-to-wear items
+                    const modalBookBtn = document.querySelector('.book-dress-btn');
+                    if (isReadyToWear) {
+                        modalBookBtn.textContent = 'Get This Look';
+                    } else {
+                        modalBookBtn.textContent = 'Book This Dress';
+                    }
+
+                    // Show modal
+                    dressModal.style.display = 'flex';
+                });
+            });
+        }
+
+        // Set up modals for both rental and ready-to-wear items
+        setupDressModal(document.querySelectorAll('.view-dress-btn'));
+        setupDressModal(document.querySelectorAll('.get-this-look-btn'), true);
+
+        // Book dress button in dress modal
+        bookDressBtn.addEventListener('click', () => {
+            dressModal.style.display = 'none';
+            bookingModal.style.display = 'flex';
+
+            // Determine if it's a ready-to-wear item
+            const isReadyToWear = bookDressBtn.textContent === 'Get This Look';
+            document.getElementById('bookingService').value = isReadyToWear ? 'ready-to-wear' : 'rental';
+        });
+
+        // Close modals
+        closeBookingModal.addEventListener('click', () => {
+            bookingModal.style.display = 'none';
+        });
+
+        closeDressModal.addEventListener('click', () => {
+            dressModal.style.display = 'none';
+        });
+
+        closeSuccessModal.addEventListener('click', () => {
+            successModal.style.display = 'none';
+        });
+
+        closeSuccessBtn.addEventListener('click', () => {
+            successModal.style.display = 'none';
+        });
+
+        // Close modal when clicking outside
+        window.addEventListener('click', (e) => {
+            if (e.target === bookingModal) {
+                bookingModal.style.display = 'none';
+            }
+            if (e.target === dressModal) {
+                dressModal.style.display = 'none';
+            }
+            if (e.target === successModal) {
+                successModal.style.display = 'none';
+            }
+        });
+
+        // Booking form steps
+        const bookingSteps = document.querySelectorAll('.step');
+        const bookingPages = document.querySelectorAll('.booking-form-page');
+        const nextStepBtns = document.querySelectorAll('.next-step');
+        const prevStepBtns = document.querySelectorAll('.prev-step');
+
+        nextStepBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                const nextPage = btn.getAttribute('data-next');
+                goToStep(nextPage);
+            });
+        });
+
+        prevStepBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                const prevPage = btn.getAttribute('data-prev');
+                goToStep(prevPage);
+            });
+        });
+
+        function goToStep(stepNumber) {
+            // Update steps
+            bookingSteps.forEach(step => {
+                if (parseInt(step.getAttribute('data-step')) <= parseInt(stepNumber)) {
+                    step.classList.add('completed');
+                    step.classList.remove('active');
+                } else {
+                    step.classList.remove('completed', 'active');
+                }
+
+                if (step.getAttribute('data-step') === stepNumber) {
+                    step.classList.add('active');
+                }
+            });
+
+            // Update pages
+            bookingPages.forEach(page => {
+                if (page.getAttribute('data-page') === stepNumber) {
+                    page.classList.add('active');
+                } else {
+                    page.classList.remove('active');
+                }
+            });
+
+            // If going to confirmation page, update summary
+            if (stepNumber === '3') {
+                updateBookingSummary();
+            }
+        }
+
+        function updateBookingSummary() {
+            const service = document.getElementById('bookingService').value;
+            const name = document.getElementById('bookingName').value;
+            const email = document.getElementById('bookingEmail').value;
+            const phone = document.getElementById('bookingPhone').value;
+            const date = document.getElementById('bookingDate').value;
+            const notes = document.getElementById('bookingNotes').value;
+
+            let serviceText = '';
+            switch (service) {
+                case 'rental':
+                    serviceText = 'Dress Rental';
+                    break;
+                case 'custom':
+                    serviceText = 'Custom-Made Dress';
+                    break;
+                case 'styling':
+                    serviceText = 'Personal Styling Service';
+                    break;
+                case 'ready-to-wear':
+                    serviceText = 'Ready to Wear';
+                    break;
+                default:
+                    serviceText = 'Service';
+            }
+
+            const summaryHTML = `
+                <p><strong>Service:</strong> ${serviceText}</p>
+                <p><strong>Name:</strong> ${name}</p>
+                <p><strong>Email:</strong> ${email}</p>
+                <p><strong>Phone:</strong> ${phone}</p>
+                ${date ? `<p><strong>Preferred Date:</strong> ${new Date(date).toLocaleDateString()}</p>` : ''}
+                ${notes ? `<p><strong>Special Requests:</strong> ${notes}</p>` : ''}
+            `;
+
+            document.getElementById('bookingSummary').innerHTML = summaryHTML;
+        }
+
+        // Form submission
+        document.getElementById('bookingForm').addEventListener('submit', (e) => {
+            e.preventDefault();
+            bookingModal.style.display = 'none';
+            successModal.style.display = 'flex';
+        });
+
+        document.getElementById('contactForm').addEventListener('submit', (e) => {
+            e.preventDefault();
+            document.getElementById('successMessage').textContent = 'Thank you for your message. We will get back to you shortly.';
+            successModal.style.display = 'flex';
+            e.target.reset();
+        });
+
+        // Smooth scrolling for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+
+                const targetId = this.getAttribute('href');
+                if (targetId === '#') return;
+
+                const targetElement = document.querySelector(targetId);
+                if (targetElement) {
+                    targetElement.scrollIntoView({
+                        behavior: 'smooth'
+                    });
+                }
+            });
+        });
+    </script>
+</body>
+
+</html>
