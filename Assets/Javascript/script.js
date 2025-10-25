@@ -52,6 +52,82 @@ setInterval(() => {
     dots[currentTestimonial].classList.add('active');
 }, 5000);
 
+// Image slider functionality
+function initImageSliders() {
+    const sliders = document.querySelectorAll('.image-slider');
+
+    sliders.forEach(slider => {
+        const images = slider.querySelectorAll('.slider-images img');
+        const prevArrow = slider.querySelector('.prev-arrow');
+        const nextArrow = slider.querySelector('.next-arrow');
+        const dots = slider.querySelectorAll('.slider-dots .dot');
+
+        let currentIndex = 0;
+
+        // Function to show a specific slide
+        function showSlide(index) {
+            // Hide all images
+            images.forEach(img => img.classList.remove('active'));
+
+            // Remove active class from all dots
+            dots.forEach(dot => dot.classList.remove('active'));
+
+            // Show the selected image
+            images[index].classList.add('active');
+
+            // Activate the corresponding dot
+            if (dots[index]) {
+                dots[index].classList.add('active');
+            }
+
+            currentIndex = index;
+        }
+
+        // Next slide
+        if (nextArrow) {
+            nextArrow.addEventListener('click', () => {
+                let nextIndex = currentIndex + 1;
+                if (nextIndex >= images.length) {
+                    nextIndex = 0;
+                }
+                showSlide(nextIndex);
+            });
+        }
+
+        // Previous slide
+        if (prevArrow) {
+            prevArrow.addEventListener('click', () => {
+                let prevIndex = currentIndex - 1;
+                if (prevIndex < 0) {
+                    prevIndex = images.length - 1;
+                }
+                showSlide(prevIndex);
+            });
+        }
+
+        // Dot navigation
+        dots.forEach((dot, index) => {
+            dot.addEventListener('click', () => {
+                showSlide(index);
+            });
+        });
+
+        // Auto-advance slides (optional - uncomment if you want auto-sliding)
+        // setInterval(() => {
+        //     let nextIndex = currentIndex + 1;
+        //     if (nextIndex >= images.length) {
+        //         nextIndex = 0;
+        //     }
+        //     showSlide(nextIndex);
+        // }, 5000);
+    });
+}
+
+// Initialize image sliders when DOM is loaded
+document.addEventListener('DOMContentLoaded', function () {
+    initImageSliders();
+});
+
 // Modal functionality
 const bookingModal = document.getElementById('bookingModal');
 const dressModal = document.getElementById('dressModal');
@@ -86,7 +162,7 @@ bookServiceBtns.forEach(btn => {
     });
 });
 
-// Open dress modal and populate with dress data
+// Open dress modal and populate with dress data - UPDATED FOR MULTIPLE IMAGES
 function setupDressModal(buttons, isReadyToWear = false) {
     buttons.forEach(btn => {
         btn.addEventListener('click', (e) => {
@@ -95,15 +171,20 @@ function setupDressModal(buttons, isReadyToWear = false) {
             // Get dress data from button attributes
             const dressName = btn.getAttribute('data-dress');
             const dressPrice = btn.getAttribute('data-price');
-            const dressImage = btn.getAttribute('data-image');
+            const dressImages = JSON.parse(btn.getAttribute('data-images') || '[]');
             const dressDesc = btn.getAttribute('data-desc');
             const dressSpecs = btn.getAttribute('data-specs');
 
             // Populate modal with dress data
             document.getElementById('dressModalTitle').textContent = dressName;
             document.getElementById('dressModalPrice').textContent = dressPrice;
-            document.getElementById('dressModalImg').src = dressImage;
-            document.getElementById('dressModalImg').alt = dressName;
+
+            // Use the first image as default in modal
+            if (dressImages.length > 0) {
+                document.getElementById('dressModalImg').src = dressImages[0];
+                document.getElementById('dressModalImg').alt = dressName;
+            }
+
             document.getElementById('dressModalDesc').textContent = dressDesc;
 
             // Clear existing specs
