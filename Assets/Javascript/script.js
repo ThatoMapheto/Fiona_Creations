@@ -142,6 +142,9 @@ const viewDressBtns = document.querySelectorAll('.view-dress-btn');
 const bookServiceBtns = document.querySelectorAll('.book-service-btn');
 const bookDressBtn = document.querySelector('.book-dress-btn');
 
+// Store selected dress information
+let selectedDress = null;
+
 // Open booking modal
 bookNowBtn.addEventListener('click', (e) => {
     e.preventDefault();
@@ -162,7 +165,7 @@ bookServiceBtns.forEach(btn => {
     });
 });
 
-// Open dress modal and populate with dress data - UPDATED FOR MULTIPLE IMAGES
+// Enhanced dress modal setup with dress storage
 function setupDressModal(buttons, isReadyToWear = false) {
     buttons.forEach(btn => {
         btn.addEventListener('click', (e) => {
@@ -175,6 +178,16 @@ function setupDressModal(buttons, isReadyToWear = false) {
             const dressDesc = btn.getAttribute('data-desc');
             const dressSpecs = btn.getAttribute('data-specs');
 
+            // Store selected dress info globally
+            selectedDress = {
+                name: dressName,
+                price: dressPrice,
+                type: isReadyToWear ? 'ready-to-wear' : 'rental',
+                images: dressImages,
+                description: dressDesc,
+                specifications: dressSpecs
+            };
+
             // Populate modal with dress data
             document.getElementById('dressModalTitle').textContent = dressName;
             document.getElementById('dressModalPrice').textContent = dressPrice;
@@ -185,7 +198,7 @@ function setupDressModal(buttons, isReadyToWear = false) {
                 document.getElementById('dressModalImg').alt = dressName;
             }
 
-            document.getElementById('dressModalDesc').textContent = dressDesc;
+            document.getElementById('dressModalDesc').textContent = dressDesc || '';
 
             // Clear existing specs
             const specsList = document.getElementById('dressModalSpecs');
@@ -230,6 +243,7 @@ bookDressBtn.addEventListener('click', () => {
 // Close modals
 closeBookingModal.addEventListener('click', () => {
     bookingModal.style.display = 'none';
+    selectedDress = null; // Reset selected dress when closing modal
 });
 
 closeDressModal.addEventListener('click', () => {
@@ -248,6 +262,7 @@ closeSuccessBtn.addEventListener('click', () => {
 window.addEventListener('click', (e) => {
     if (e.target === bookingModal) {
         bookingModal.style.display = 'none';
+        selectedDress = null; // Reset selected dress when closing modal
     }
     if (e.target === dressModal) {
         dressModal.style.display = 'none';
@@ -307,6 +322,7 @@ function goToStep(stepNumber) {
     }
 }
 
+// Enhanced booking summary with dress information
 function updateBookingSummary() {
     const service = document.getElementById('bookingService').value;
     const name = document.getElementById('bookingName').value;
@@ -333,30 +349,197 @@ function updateBookingSummary() {
             serviceText = 'Service';
     }
 
+    // Add dress information if available
+    let dressInfo = '';
+    if (selectedDress) {
+        dressInfo = `<p><strong>Selected Dress:</strong> ${selectedDress.name}</p>
+                     <p><strong>Price:</strong> ${selectedDress.price}</p>
+                     <p><strong>Type:</strong> ${selectedDress.type === 'ready-to-wear' ? 'Ready to Wear' : 'Rental'}</p>`;
+    }
+
     const summaryHTML = `
-        <p><strong>Service:</strong> ${serviceText}</p>
-        <p><strong>Name:</strong> ${name}</p>
-        <p><strong>Email:</strong> ${email}</p>
-        <p><strong>Phone:</strong> ${phone}</p>
-        ${date ? `<p><strong>Preferred Date:</strong> ${new Date(date).toLocaleDateString()}</p>` : ''}
-        ${notes ? `<p><strong>Special Requests:</strong> ${notes}</p>` : ''}
+        <div style="background: #f8f8f8; padding: 15px; border-radius: 5px; margin-bottom: 1rem;">
+            <p><strong>Service:</strong> ${serviceText}</p>
+            ${dressInfo}
+            <p><strong>Name:</strong> ${name}</p>
+            <p><strong>Email:</strong> ${email}</p>
+            <p><strong>Phone:</strong> ${phone}</p>
+            ${date ? `<p><strong>Preferred Date:</strong> ${new Date(date).toLocaleDateString()}</p>` : ''}
+            ${notes ? `<p><strong>Special Requests:</strong> ${notes}</p>` : ''}
+        </div>
+        <p style="color: #5e2c3e; font-weight: bold;">Click "Confirm Booking" to send this directly to Fiona Creations</p>
     `;
 
     document.getElementById('bookingSummary').innerHTML = summaryHTML;
 }
 
-// Form submission
-document.getElementById('bookingForm').addEventListener('submit', (e) => {
+// Simple email booking solution - NO BACKEND REQUIRED
+function submitBookingSimple(bookingData) {
+    const dressInfo = bookingData.dress ?
+        `SELECTED DRESS:%0D%0A- Dress Name: ${bookingData.dress.name}%0D%0A- Price: ${bookingData.dress.price}%0D%0A- Type: ${bookingData.dress.type}%0D%0A%0D%0A` :
+        `SERVICE REQUESTED:%0D%0A- ${bookingData.service}%0D%0A%0D%0A`;
+
+    const subject = `🎀 New Booking - ${bookingData.name}`;
+
+    const body = `
+NEW BOOKING FROM FIONA CREATIONS WEBSITE%0D%0A
+=============================================%0D%0A%0D%0A
+
+CUSTOMER DETAILS:%0D%0A
+- Name: ${bookingData.name}%0D%0A
+- Email: ${bookingData.email}%0D%0A
+- Phone: ${bookingData.phone}%0D%0A%0D%0A
+
+${dressInfo}
+BOOKING DETAILS:%0D%0A
+- Preferred Date: ${bookingData.date || 'Not specified'}%0D%0A
+- Special Requests: ${bookingData.notes || 'None'}%0D%0A%0D%0A
+
+ADDITIONAL INFORMATION:%0D%0A
+- Submitted: ${new Date().toLocaleString('en-ZA', { timeZone: 'Africa/Johannesburg' })}%0D%0A
+- Website: Fiona Creations Booking System%0D%0A%0D%0A
+
+---%0D%0AThis booking was submitted through the Fiona Creations website.
+    `.trim();
+
+    // Open email client with pre-filled details
+    const mailtoLink = `mailto:fionacreations21@gmail.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+
+    // Try to open email client
+    window.open(mailtoLink, '_blank');
+
+    return Promise.resolve();
+}
+
+// Enhanced booking form submission with email integration
+document.getElementById('bookingForm').addEventListener('submit', async (e) => {
     e.preventDefault();
-    bookingModal.style.display = 'none';
-    successModal.style.display = 'flex';
+
+    // Get all form data
+    const formData = {
+        service: document.getElementById('bookingService').value,
+        name: document.getElementById('bookingName').value,
+        email: document.getElementById('bookingEmail').value,
+        phone: document.getElementById('bookingPhone').value,
+        date: document.getElementById('bookingDate').value,
+        notes: document.getElementById('bookingNotes').value,
+        dress: selectedDress,
+        timestamp: new Date().toISOString()
+    };
+
+    // Validate required fields
+    if (!formData.name || !formData.email || !formData.phone) {
+        alert('Please fill in all required fields: Name, Email, and Phone.');
+        return;
+    }
+
+    try {
+        // Show loading state
+        const submitBtn = document.querySelector('#bookingForm button[type="submit"]');
+        const originalText = submitBtn.textContent;
+        submitBtn.textContent = 'Sending...';
+        submitBtn.disabled = true;
+
+        // Submit via email
+        await submitBookingSimple(formData);
+
+        // Success - show confirmation modal
+        bookingModal.style.display = 'none';
+
+        // Update success message based on booking type
+        let successMessage = `Thank you ${formData.name}! Your booking request has been sent to Fiona Creations.`;
+        if (formData.dress) {
+            successMessage += ` We've received your interest in the "${formData.dress.name}".`;
+        }
+        successMessage += ` Fiona will contact you shortly to confirm your booking.`;
+
+        document.getElementById('successMessage').textContent = successMessage;
+        successModal.style.display = 'flex';
+
+        // Reset everything
+        selectedDress = null;
+        document.getElementById('bookingForm').reset();
+
+        // Reset button
+        submitBtn.textContent = originalText;
+        submitBtn.disabled = false;
+
+    } catch (error) {
+        alert('There was an error preparing your booking. Please try again or contact us directly at fionacreations21@gmail.com');
+        console.error('Booking error:', error);
+
+        // Reset button state
+        const submitBtn = document.querySelector('#bookingForm button[type="submit"]');
+        submitBtn.textContent = 'Confirm Booking';
+        submitBtn.disabled = false;
+    }
 });
 
-document.getElementById('contactForm').addEventListener('submit', (e) => {
+// Enhanced contact form with email integration
+document.getElementById('contactForm').addEventListener('submit', async (e) => {
     e.preventDefault();
-    document.getElementById('successMessage').textContent = 'Thank you for your message. We will get back to you shortly.';
-    successModal.style.display = 'flex';
-    e.target.reset();
+
+    const formData = {
+        name: document.getElementById('name').value,
+        email: document.getElementById('email').value,
+        phone: document.getElementById('phone').value,
+        service: document.getElementById('service').value,
+        message: document.getElementById('message').value,
+        type: 'general-inquiry'
+    };
+
+    // Validate required fields
+    if (!formData.name || !formData.email || !formData.message) {
+        alert('Please fill in all required fields: Name, Email, and Message.');
+        return;
+    }
+
+    const subject = `📧 Website Inquiry - ${formData.name}`;
+    const body = `
+NEW INQUIRY FROM FIONA CREATIONS WEBSITE%0D%0A
+=============================================%0D%0A%0D%0A
+
+CONTACT DETAILS:%0D%0A
+- Name: ${formData.name}%0D%0A
+- Email: ${formData.email}%0D%0A
+- Phone: ${formData.phone || 'Not provided'}%0D%0A%0D%0A
+
+SERVICE INTEREST:%0D%0A
+- ${formData.service || 'Not specified'}%0D%0A%0D%0A
+
+MESSAGE:%0D%0A
+${formData.message}%0D%0A%0D%0A
+
+ADDITIONAL INFORMATION:%0D%0A
+- Submitted: ${new Date().toLocaleString('en-ZA', { timeZone: 'Africa/Johannesburg' })}%0D%0A
+- Type: General Inquiry%0D%0A
+    `.trim();
+
+    try {
+        // Show loading state
+        const submitBtn = document.querySelector('#contactForm button[type="submit"]');
+        const originalText = submitBtn.textContent;
+        submitBtn.textContent = 'Sending...';
+        submitBtn.disabled = true;
+
+        window.open(`mailto:fionacreations21@gmail.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`, '_blank');
+
+        document.getElementById('successMessage').textContent = `Thank you ${formData.name}! Your message has been sent to Fiona Creations. We will get back to you shortly.`;
+        successModal.style.display = 'flex';
+        document.getElementById('contactForm').reset();
+
+        // Reset button
+        submitBtn.textContent = originalText;
+        submitBtn.disabled = false;
+
+    } catch (error) {
+        alert('There was an error sending your message. Please try again or contact us directly at fionacreations21@gmail.com');
+
+        // Reset button state
+        const submitBtn = document.querySelector('#contactForm button[type="submit"]');
+        submitBtn.textContent = 'Send Message';
+        submitBtn.disabled = false;
+    }
 });
 
 // Smooth scrolling for anchor links
@@ -374,4 +557,11 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
             });
         }
     });
+});
+
+// Reset selected dress when booking modal opens (in case user goes back)
+document.getElementById('bookingModal').addEventListener('click', (e) => {
+    if (e.target === bookingModal) {
+        selectedDress = null;
+    }
 });
