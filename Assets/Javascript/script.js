@@ -376,30 +376,29 @@ function updateBookingSummary() {
 // Simple email booking solution - NO BACKEND REQUIRED
 function submitBookingSimple(bookingData) {
     const dressInfo = bookingData.dress ?
-        `SELECTED DRESS:%0D%0A- Dress Name: ${bookingData.dress.name}%0D%0A- Price: ${bookingData.dress.price}%0D%0A- Type: ${bookingData.dress.type}%0D%0A%0D%0A` :
-        `SERVICE REQUESTED:%0D%0A- ${bookingData.service}%0D%0A%0D%0A`;
+        `Selected dress:    ${bookingData.dress.name}
+         Price:             ${bookingData.dress.price} 
+         Type:              ${bookingData.dress.type}` :
+        `SERVICE REQUESTED: ${bookingData.service}`;
 
-    const subject = `🎀 New Booking - ${bookingData.name}`;
+    const subject = `🎀 New Booking : ${bookingData.name}`;
 
     const body = `
-NEW BOOKING FROM FIONA CREATIONS WEBSITE%0D%0A
-=============================================%0D%0A%0D%0A
+NEW BOOKING FROM FIONA CREATIONS WEBSITE
 
-CUSTOMER DETAILS:%0D%0A
-- Name: ${bookingData.name}%0D%0A
-- Email: ${bookingData.email}%0D%0A
-- Phone: ${bookingData.phone}%0D%0A%0D%0A
+Customer Details
+Name:   ${bookingData.name}
+Email:  ${bookingData.email}
+Phone:  ${bookingData.phone}
 
 ${dressInfo}
-BOOKING DETAILS:%0D%0A
-- Preferred Date: ${bookingData.date || 'Not specified'}%0D%0A
-- Special Requests: ${bookingData.notes || 'None'}%0D%0A%0D%0A
+Preferred Date:     ${bookingData.date || 'Not specified'}
+Special Requests:   ${bookingData.notes || 'None'}
+Submitted: ${new Date().toLocaleString('en-ZA', { timeZone: 'Africa/Johannesburg' })}
+From: Fiona Creations Booking System
 
-ADDITIONAL INFORMATION:%0D%0A
-- Submitted: ${new Date().toLocaleString('en-ZA', { timeZone: 'Africa/Johannesburg' })}%0D%0A
-- Website: Fiona Creations Booking System%0D%0A%0D%0A
+This booking was submitted through the Fiona Creations website. Please press send and we will get back to you shortly.
 
----%0D%0AThis booking was submitted through the Fiona Creations website.
     `.trim();
 
     // Open email client with pre-filled details
@@ -564,4 +563,112 @@ document.getElementById('bookingModal').addEventListener('click', (e) => {
     if (e.target === bookingModal) {
         selectedDress = null;
     }
+});
+
+// Hero Slideshow Functionality - Simplified (No Arrows)
+function initHeroSlideshow() {
+    const slides = document.querySelectorAll('.slide');
+    const dots = document.querySelectorAll('.hero-slider-controls .dot');
+
+    let currentSlide = 0;
+    let slideInterval;
+
+    // Function to show a specific slide
+    function showSlide(index) {
+        // Remove active class from all slides and dots
+        slides.forEach(slide => slide.classList.remove('active'));
+        dots.forEach(dot => dot.classList.remove('active'));
+
+        // Add active class to current slide and dot
+        slides[index].classList.add('active');
+        dots[index].classList.add('active');
+
+        currentSlide = index;
+    }
+
+    // Next slide function
+    function nextSlide() {
+        let nextIndex = currentSlide + 1;
+        if (nextIndex >= slides.length) {
+            nextIndex = 0;
+        }
+        showSlide(nextIndex);
+    }
+
+    // Auto-advance slides
+    function startSlideshow() {
+        slideInterval = setInterval(nextSlide, 5000); // Change slide every 5 seconds
+    }
+
+    // Stop slideshow on hover
+    function pauseSlideshow() {
+        clearInterval(slideInterval);
+    }
+
+    // Resume slideshow when not hovering
+    function resumeSlideshow() {
+        startSlideshow();
+    }
+
+    // Event listeners for dots
+    dots.forEach((dot, index) => {
+        dot.addEventListener('click', () => {
+            pauseSlideshow();
+            showSlide(index);
+            setTimeout(resumeSlideshow, 5000);
+        });
+    });
+
+    // Pause on hover
+    const heroSection = document.querySelector('.hero');
+    if (heroSection) {
+        heroSection.addEventListener('mouseenter', pauseSlideshow);
+        heroSection.addEventListener('mouseleave', resumeSlideshow);
+    }
+
+    // Touch swipe support for mobile
+    let touchStartX = 0;
+    let touchEndX = 0;
+
+    if (heroSection) {
+        heroSection.addEventListener('touchstart', (e) => {
+            touchStartX = e.changedTouches[0].screenX;
+        });
+
+        heroSection.addEventListener('touchend', (e) => {
+            touchEndX = e.changedTouches[0].screenX;
+            handleSwipe();
+        });
+    }
+
+    function handleSwipe() {
+        const swipeThreshold = 50;
+
+        if (touchEndX < touchStartX - swipeThreshold) {
+            // Swipe left - next slide
+            pauseSlideshow();
+            nextSlide();
+            setTimeout(resumeSlideshow, 5000);
+        }
+
+        if (touchEndX > touchStartX + swipeThreshold) {
+            // Swipe right - previous slide
+            pauseSlideshow();
+            let prevIndex = currentSlide - 1;
+            if (prevIndex < 0) {
+                prevIndex = slides.length - 1;
+            }
+            showSlide(prevIndex);
+            setTimeout(resumeSlideshow, 5000);
+        }
+    }
+
+    // Start the slideshow
+    startSlideshow();
+}
+
+// Initialize the slideshow when DOM is loaded
+document.addEventListener('DOMContentLoaded', function () {
+    initImageSliders();
+    initHeroSlideshow();
 });
