@@ -1,4 +1,3 @@
-// Paste ALL your JavaScript from <script> here 
 // Mobile menu toggle
 const mobileMenuBtn = document.getElementById('mobileMenuBtn');
 const navLinks = document.getElementById('navLinks');
@@ -111,22 +110,8 @@ function initImageSliders() {
                 showSlide(index);
             });
         });
-
-        // Auto-advance slides (optional - uncomment if you want auto-sliding)
-        // setInterval(() => {
-        //     let nextIndex = currentIndex + 1;
-        //     if (nextIndex >= images.length) {
-        //         nextIndex = 0;
-        //     }
-        //     showSlide(nextIndex);
-        // }, 5000);
     });
 }
-
-// Initialize image sliders when DOM is loaded
-document.addEventListener('DOMContentLoaded', function () {
-    initImageSliders();
-});
 
 // Modal functionality
 const bookingModal = document.getElementById('bookingModal');
@@ -145,21 +130,43 @@ const bookDressBtn = document.querySelector('.book-dress-btn');
 // Store selected dress information
 let selectedDress = null;
 
+// Function to open modal with blur
+function openModal(modal) {
+    modal.style.display = 'flex';
+    document.body.classList.add('body-blur');
+}
+
+// Function to close modal and remove blur
+function closeModal(modal) {
+    modal.style.display = 'none';
+    document.body.classList.remove('body-blur');
+}
+
+// Enhanced function to reset booking form completely
+function resetBookingForm() {
+    selectedDress = null;
+    document.getElementById('bookingForm').reset();
+    goToStep('1'); // Reset to first step
+}
+
 // Open booking modal
 bookNowBtn.addEventListener('click', (e) => {
     e.preventDefault();
-    bookingModal.style.display = 'flex';
+    resetBookingForm(); // Reset form before opening
+    openModal(bookingModal);
 });
 
 heroBookBtn.addEventListener('click', (e) => {
     e.preventDefault();
-    bookingModal.style.display = 'flex';
+    resetBookingForm(); // Reset form before opening
+    openModal(bookingModal);
 });
 
 bookServiceBtns.forEach(btn => {
     btn.addEventListener('click', (e) => {
         e.preventDefault();
-        bookingModal.style.display = 'flex';
+        resetBookingForm(); // Reset form before opening
+        openModal(bookingModal);
         const service = btn.getAttribute('data-service');
         document.getElementById('bookingService').value = service === 'custom' ? 'custom' : service === 'styling' ? 'styling' : 'rental';
     });
@@ -221,7 +228,7 @@ function setupDressModal(buttons, isReadyToWear = false) {
             }
 
             // Show modal
-            dressModal.style.display = 'flex';
+            openModal(dressModal);
         });
     });
 }
@@ -232,8 +239,11 @@ setupDressModal(document.querySelectorAll('.get-this-look-btn'), true);
 
 // Book dress button in dress modal
 bookDressBtn.addEventListener('click', () => {
-    dressModal.style.display = 'none';
-    bookingModal.style.display = 'flex';
+    closeModal(dressModal);
+    resetBookingForm(); // Reset form before opening booking modal
+
+    // Now open booking modal with new selection
+    openModal(bookingModal);
 
     // Determine if it's a ready-to-wear item
     const isReadyToWear = bookDressBtn.textContent === 'Get This Look';
@@ -242,33 +252,33 @@ bookDressBtn.addEventListener('click', () => {
 
 // Close modals
 closeBookingModal.addEventListener('click', () => {
-    bookingModal.style.display = 'none';
-    selectedDress = null; // Reset selected dress when closing modal
+    closeModal(bookingModal);
+    resetBookingForm(); // Reset when closing modal
 });
 
 closeDressModal.addEventListener('click', () => {
-    dressModal.style.display = 'none';
+    closeModal(dressModal);
 });
 
 closeSuccessModal.addEventListener('click', () => {
-    successModal.style.display = 'none';
+    closeModal(successModal);
 });
 
 closeSuccessBtn.addEventListener('click', () => {
-    successModal.style.display = 'none';
+    closeModal(successModal);
 });
 
 // Close modal when clicking outside
 window.addEventListener('click', (e) => {
     if (e.target === bookingModal) {
-        bookingModal.style.display = 'none';
-        selectedDress = null; // Reset selected dress when closing modal
+        closeModal(bookingModal);
+        resetBookingForm(); // Reset when clicking outside
     }
     if (e.target === dressModal) {
-        dressModal.style.display = 'none';
+        closeModal(dressModal);
     }
     if (e.target === successModal) {
-        successModal.style.display = 'none';
+        closeModal(successModal);
     }
 });
 
@@ -397,7 +407,7 @@ Special Requests:   ${bookingData.notes || 'None'}
 Submitted: ${new Date().toLocaleString('en-ZA', { timeZone: 'Africa/Johannesburg' })}
 From: Fiona Creations Booking System
 
-This booking was submitted through the Fiona Creations website. Please press send and we will get back to you shortly.
+
 
     `.trim();
 
@@ -443,7 +453,7 @@ document.getElementById('bookingForm').addEventListener('submit', async (e) => {
         await submitBookingSimple(formData);
 
         // Success - show confirmation modal
-        bookingModal.style.display = 'none';
+        closeModal(bookingModal);
 
         // Update success message based on booking type
         let successMessage = `Thank you ${formData.name}! Your booking request has been sent to Fiona Creations.`;
@@ -453,11 +463,10 @@ document.getElementById('bookingForm').addEventListener('submit', async (e) => {
         successMessage += ` Fiona will contact you shortly to confirm your booking.`;
 
         document.getElementById('successMessage').textContent = successMessage;
-        successModal.style.display = 'flex';
+        openModal(successModal);
 
-        // Reset everything
-        selectedDress = null;
-        document.getElementById('bookingForm').reset();
+        // Reset everything - IMPORTANT: This happens after success
+        resetBookingForm();
 
         // Reset button
         submitBtn.textContent = originalText;
@@ -524,7 +533,7 @@ ADDITIONAL INFORMATION:%0D%0A
         window.open(`mailto:fionacreations21@gmail.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`, '_blank');
 
         document.getElementById('successMessage').textContent = `Thank you ${formData.name}! Your message has been sent to Fiona Creations. We will get back to you shortly.`;
-        successModal.style.display = 'flex';
+        openModal(successModal);
         document.getElementById('contactForm').reset();
 
         // Reset button
@@ -558,31 +567,22 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
     });
 });
 
-// Reset selected dress when booking modal opens (in case user goes back)
-document.getElementById('bookingModal').addEventListener('click', (e) => {
-    if (e.target === bookingModal) {
-        selectedDress = null;
-    }
-});
-
-// Hero Slideshow Functionality - Simplified (No Arrows)
+// Hero Slideshow Functionality - No Controls (Auto-only)
 function initHeroSlideshow() {
-    const slides = document.querySelectorAll('.slide');
-    const dots = document.querySelectorAll('.hero-slider-controls .dot');
+    const slides = document.querySelectorAll('.hero-slideshow .slide');
+
+    if (slides.length === 0) return;
 
     let currentSlide = 0;
     let slideInterval;
 
     // Function to show a specific slide
     function showSlide(index) {
-        // Remove active class from all slides and dots
+        // Remove active class from all slides
         slides.forEach(slide => slide.classList.remove('active'));
-        dots.forEach(dot => dot.classList.remove('active'));
 
-        // Add active class to current slide and dot
+        // Add active class to current slide
         slides[index].classList.add('active');
-        dots[index].classList.add('active');
-
         currentSlide = index;
     }
 
@@ -597,10 +597,10 @@ function initHeroSlideshow() {
 
     // Auto-advance slides
     function startSlideshow() {
-        slideInterval = setInterval(nextSlide, 5000); // Change slide every 5 seconds
+        slideInterval = setInterval(nextSlide, 4000); // Change slide every 4 seconds
     }
 
-    // Stop slideshow on hover
+    // Stop slideshow on hover (optional)
     function pauseSlideshow() {
         clearInterval(slideInterval);
     }
@@ -610,64 +610,23 @@ function initHeroSlideshow() {
         startSlideshow();
     }
 
-    // Event listeners for dots
-    dots.forEach((dot, index) => {
-        dot.addEventListener('click', () => {
-            pauseSlideshow();
-            showSlide(index);
-            setTimeout(resumeSlideshow, 5000);
-        });
-    });
-
-    // Pause on hover
+    // Pause on hover (optional - remove if you don't want this)
     const heroSection = document.querySelector('.hero');
     if (heroSection) {
         heroSection.addEventListener('mouseenter', pauseSlideshow);
         heroSection.addEventListener('mouseleave', resumeSlideshow);
-    }
 
-    // Touch swipe support for mobile
-    let touchStartX = 0;
-    let touchEndX = 0;
-
-    if (heroSection) {
-        heroSection.addEventListener('touchstart', (e) => {
-            touchStartX = e.changedTouches[0].screenX;
-        });
-
-        heroSection.addEventListener('touchend', (e) => {
-            touchEndX = e.changedTouches[0].screenX;
-            handleSwipe();
-        });
-    }
-
-    function handleSwipe() {
-        const swipeThreshold = 50;
-
-        if (touchEndX < touchStartX - swipeThreshold) {
-            // Swipe left - next slide
-            pauseSlideshow();
-            nextSlide();
-            setTimeout(resumeSlideshow, 5000);
-        }
-
-        if (touchEndX > touchStartX + swipeThreshold) {
-            // Swipe right - previous slide
-            pauseSlideshow();
-            let prevIndex = currentSlide - 1;
-            if (prevIndex < 0) {
-                prevIndex = slides.length - 1;
-            }
-            showSlide(prevIndex);
-            setTimeout(resumeSlideshow, 5000);
-        }
+        // Touch events for mobile
+        heroSection.addEventListener('touchstart', pauseSlideshow);
+        heroSection.addEventListener('touchend', resumeSlideshow);
     }
 
     // Start the slideshow
+    showSlide(0); // Show first slide immediately
     startSlideshow();
 }
 
-// Initialize the slideshow when DOM is loaded
+// Initialize everything when DOM is loaded
 document.addEventListener('DOMContentLoaded', function () {
     initImageSliders();
     initHeroSlideshow();
