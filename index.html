@@ -22,16 +22,16 @@
             <div class="nav-links" id="navLinks">
                 <a href="#home">Home</a>
                 <a href="#about">About</a>
-                <a href="#services">Services</a>
-                <a href="#rentals">Our Rentals</a> <!-- Added Our Rentals link -->
-                <a href="#ready-to-wear">Ready to wear</a>
+                <a href="#rentals">Rentals</a>
+                <a href="#ready-to-wear">Ready to Wear</a>
                 <a href="#gallery">Gallery</a>
                 <a href="#contact">Contact</a>
-                <a href="#" id="bookNowBtn">Book Now</a>
+                <a href="#" id="bookNowBtn">Book Consultation</a>
             </div>
         </nav>
     </header>
 
+    <!-- Updated Hero Section -->
     <section class="hero" id="home">
         <div class="hero-slideshow">
             <div class="slide active" style="background-image: url('./Assets/Images/Hero/7.JPG');"></div>
@@ -43,12 +43,15 @@
         <div class="hero-content">
             <h1>Elegant Event Wear for Your Special Occasion</h1>
             <p>Rent stunning dresses or have one custom-made - look your best without the commitment of purchase</p>
-            <div>
-                <a href="#services" class="btn">Our Services</a>
+            <div class="hero-buttons">
+                <a href="#rentals" class="btn">View Rentals</a>
+                <a href="#ready-to-wear" class="btn">Ready to Wear</a>
                 <a href="#" class="btn btn-outline" id="heroBookBtn">Book Consultation</a>
             </div>
         </div>
     </section>
+
+    <!-- Remove the entire Services section (#services) -->
 
     <section class="section" id="about">
         <div class="section-title">
@@ -69,60 +72,6 @@
                         Committed to sustainability, we promote pre-wearable fashion to reduce waste while making
                         elegance accessible.</p>
                 </div>
-    </section>
-
-    <section id="services">
-        <div class="section-title">
-            <h2>Our Services</h2>
-            <p>We make luxury event wear accessible through our curated services</p>
-        </div>
-        <div class="services-grid">
-            <div class="service-card">
-                <div class="service-img">
-                    <img src="./Assets/Images/Services/Custom-made_dresses.jpg" alt="Dress Rentals">
-                </div>
-                <div class="service-content">
-                    <h3>Dress Rentals</h3>
-                    <p>Stunning bridal, bridesmaid, and evening wear available for rent at a fraction of retail price.
-                    </p>
-                    <!-- Updated this button to link to rentals section -->
-                    <a href="#rentals" class="btn btn-outline" style="margin-top: 1rem;">View rentals</a>
-                </div>
-            </div>
-            <div class="service-card">
-                <div class="service-img">
-                    <img src="./Assets/Images/Services/4.PNG" alt="Custom-Made Dresses">
-                </div>
-                <div class="service-content">
-                    <h3>Custom-Made Dresses</h3>
-                    <p>Custom designs crafted just for you, combining a flawless fit with a one-of-a-kind style.</p>
-                    <a href="#" class="btn btn-outline book-service-btn" data-service="custom"
-                        style="margin-top: 1rem;">Book Consultation</a>
-                </div>
-            </div>
-            <div class="service-card">
-                <div class="service-img">
-                    <img src="./Assets/Images/Services/Personal_styling.jpg" alt="Personal Styling">
-                </div>
-                <div class="service-content">
-                    <h3>Personal Styling</h3>
-                    <p>Out-of-office styling service at your home, venue, or with your bridal party.</p>
-                    <a href="#" class="btn btn-outline book-service-btn" data-service="styling"
-                        style="margin-top: 1rem;">Book Service</a>
-                </div>
-            </div>
-            <div class="service-card">
-                <div class="service-img">
-                    <img src="./Assets/Images/Ready_to_wear/Puno_the_dress/4.JPG" alt="Dress Rentals">
-                </div>
-                <div class="service-content">
-                    <h3>Ready to wear</h3>
-                    <p>Beautiful ready-to-wear looks available for every occasion.
-                    </p>
-                    <a href="#ready-to-wear" class="btn btn-outline" style="margin-top: 1rem;">View collection</a>
-                </div>
-            </div>
-        </div>
     </section>
 
     <section id="rentals">
@@ -504,7 +453,7 @@
                 <div class="service-content">
                     <h3>Ntepane the Dress</h3>
                     <p>The Beaded Full-Skirt Evening Gown</p>
-                    <button class="btn btn-outline get-this-look-btn" data-dress="Ntepane the Dress" data-price="R1,200"
+                    <button class="btn btn-outline get-this-look-btn" data-dress="Ntepane the Dress" data-price="R3,800"
                         data-images='["./Assets/Images/Ready_to_wear/Custom(Black)/3.jpg"]' data-desc=""
                         data-specs="Intricate Beaded Bodice and Waist|Voluminous Long Sleeves with cuff detail|Elegant, Full Pleated Midi Skirt">
                         Get This Look
@@ -609,7 +558,7 @@
                     <p>Playful Abstract Ruffle Dress (Mini or Maxi)</p>
                     <button class="btn btn-outline get-this-look-btn" data-dress="Letago the Dress"
                         data-price="R800/1,000" data-images='["./Assets/Images/Ready_to_wear/Letago_the_dress/5.JPG"]'
-                        data-desc=""
+                        data-desc="Please specify in the 'Special Requests' section whether you would like the mini or maxi length."
                         data-specs="Trendy Mock Nec|Comfortable Sleeveless A-Line Fit|Eye-catching Abstract Print">
                         Get This Look
                     </button>
@@ -685,6 +634,7 @@
                     <p>The Dramatic Puff-Sleeve Dolly Dress</p>
                     <button class="btn btn-outline get-this-look-btn" data-dress="Puno the Dress"
                         data-price="R1,600/R1,300" data-images='["./Assets/Images/Ready_to_wear/Puno_the_dress/10.JPG"]'
+                        data-desc="Please specify in the 'Special Requests' section whether you would like the mini or maxi length."
                         data-specs="Butter Yellow Mini: A playful, flirty mini-length.
                         |Blush Pink Midi: An elegant midi-length with a beautifully full skirt">
                         Get This Look
@@ -714,7 +664,7 @@
                 <div class="service-content">
                     <h3>Puno the dress (Custom)</h3>
                     <p>The Scarlet Embroidered Showstopper</p>
-                    <button class="btn btn-outline get-this-look-btn" data-dress="Tshimologo the dress"
+                    <button class="btn btn-outline get-this-look-btn" data-dress="Puno the dress (Custom)"
                         data-price="R4,000" data-images='["./Assets/Images/Ready_to_wear/Tshimologo_the_dress/4.JPG"]'
                         data-specs="Dazzling Red Beadwork and Embroidery|Dramatic Puff Sleeves|Flattering Full Midi Skirt with Pockets|Option to customise is available">
                         Get This Look

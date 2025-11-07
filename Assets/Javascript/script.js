@@ -132,6 +132,7 @@ const bookDressBtn = document.querySelector('.book-dress-btn');
 
 // Store selected dress information
 let selectedDress = null;
+let isDressBooking = false; // NEW: Track if this is a dress-specific booking
 
 // Function to open modal with blur
 function openModal(modal) {
@@ -148,30 +149,41 @@ function closeModal(modal) {
 // Enhanced function to reset booking form completely
 function resetBookingForm() {
     selectedDress = null;
+    isDressBooking = false;
     document.getElementById('bookingForm').reset();
-    goToStep('1'); // Reset to first step
+    // Reset to appropriate step based on booking type
+    if (isDressBooking) {
+        goToStep('2'); // Skip service selection for dress bookings
+    } else {
+        goToStep('1'); // Start with service selection for general bookings
+    }
 }
 
-// Open booking modal
+// Open booking modal for general consultation
 bookNowBtn.addEventListener('click', (e) => {
     e.preventDefault();
-    resetBookingForm(); // Reset form before opening
+    isDressBooking = false;
+    resetBookingForm();
     openModal(bookingModal);
 });
 
 heroBookBtn.addEventListener('click', (e) => {
     e.preventDefault();
-    resetBookingForm(); // Reset form before opening
+    isDressBooking = false;
+    resetBookingForm();
     openModal(bookingModal);
 });
 
+// Service buttons (for custom and styling services)
 bookServiceBtns.forEach(btn => {
     btn.addEventListener('click', (e) => {
         e.preventDefault();
-        resetBookingForm(); // Reset form before opening
+        isDressBooking = false;
+        resetBookingForm();
         openModal(bookingModal);
         const service = btn.getAttribute('data-service');
-        document.getElementById('bookingService').value = service === 'custom' ? 'custom' : service === 'styling' ? 'styling' : 'rental';
+        document.getElementById('bookingService').value = service;
+        goToStep('2'); // Skip to details after service selection
     });
 });
 
@@ -197,6 +209,8 @@ function setupDressModal(buttons, isReadyToWear = false) {
                 description: dressDesc,
                 specifications: dressSpecs
             };
+
+            console.log('Selected dress stored:', selectedDress);
 
             // Populate modal with dress data
             document.getElementById('dressModalTitle').textContent = dressName;
@@ -227,7 +241,7 @@ function setupDressModal(buttons, isReadyToWear = false) {
             if (isReadyToWear) {
                 modalBookBtn.textContent = 'Get This Look';
             } else {
-                modalBookBtn.textContent = 'Book This Dress';
+                modalBookBtn.textContent = 'Reserve This Dress';
             }
 
             // Show modal
@@ -240,23 +254,29 @@ function setupDressModal(buttons, isReadyToWear = false) {
 setupDressModal(document.querySelectorAll('.view-dress-btn'));
 setupDressModal(document.querySelectorAll('.get-this-look-btn'), true);
 
-// Book dress button in dress modal
+// Book dress button in dress modal - UPDATED: Skip service selection
 bookDressBtn.addEventListener('click', () => {
     closeModal(dressModal);
-    resetBookingForm(); // Reset form before opening booking modal
+    isDressBooking = true; // Mark as dress-specific booking
 
-    // Now open booking modal with new selection
+    // Reset form and open booking modal
+    document.getElementById('bookingForm').reset();
+
+    // Set service type automatically based on dress type
+    const serviceType = selectedDress.type === 'ready-to-wear' ? 'ready-to-wear' : 'rental';
+    document.getElementById('bookingService').value = serviceType;
+
+    console.log('Dress booking - Service auto-set to:', serviceType);
+
+    // Open booking modal and skip to details step
     openModal(bookingModal);
-
-    // Determine if it's a ready-to-wear item
-    const isReadyToWear = bookDressBtn.textContent === 'Get This Look';
-    document.getElementById('bookingService').value = isReadyToWear ? 'ready-to-wear' : 'rental';
+    goToStep('2'); // Skip service selection, go directly to details
 });
 
 // Close modals
 closeBookingModal.addEventListener('click', () => {
     closeModal(bookingModal);
-    resetBookingForm(); // Reset when closing modal
+    resetBookingForm();
 });
 
 closeDressModal.addEventListener('click', () => {
@@ -275,7 +295,7 @@ closeSuccessBtn.addEventListener('click', () => {
 window.addEventListener('click', (e) => {
     if (e.target === bookingModal) {
         closeModal(bookingModal);
-        resetBookingForm(); // Reset when clicking outside
+        resetBookingForm();
     }
     if (e.target === dressModal) {
         closeModal(dressModal);
@@ -306,23 +326,42 @@ prevStepBtns.forEach(btn => {
 });
 
 function goToStep(stepNumber) {
+    // For dress bookings, skip step 1 (service selection)
+    if (isDressBooking && stepNumber === '1') {
+        stepNumber = '2';
+    }
+
     // Update steps
     bookingSteps.forEach(step => {
-        if (parseInt(step.getAttribute('data-step')) <= parseInt(stepNumber)) {
+        const stepNum = step.getAttribute('data-step');
+
+        // Hide step 1 for dress bookings
+        if (isDressBooking && stepNum === '1') {
+            step.style.display = 'none';
+        } else {
+            step.style.display = 'flex';
+        }
+
+        if (parseInt(stepNum) <= parseInt(stepNumber)) {
             step.classList.add('completed');
             step.classList.remove('active');
         } else {
             step.classList.remove('completed', 'active');
         }
 
-        if (step.getAttribute('data-step') === stepNumber) {
+        if (stepNum === stepNumber) {
             step.classList.add('active');
         }
     });
 
     // Update pages
     bookingPages.forEach(page => {
-        if (page.getAttribute('data-page') === stepNumber) {
+        const pageNum = page.getAttribute('data-page');
+
+        // Hide page 1 for dress bookings
+        if (isDressBooking && pageNum === '1') {
+            page.classList.remove('active');
+        } else if (pageNum === stepNumber) {
             page.classList.add('active');
         } else {
             page.classList.remove('active');
@@ -365,30 +404,42 @@ function updateBookingSummary() {
     // Add dress information if available
     let dressInfo = '';
     if (selectedDress) {
-        dressInfo = `<p><strong>Selected Dress:</strong> ${selectedDress.name}</p>
-                     <p><strong>Price:</strong> ${selectedDress.price}</p>
-                     <p><strong>Type:</strong> ${selectedDress.type === 'ready-to-wear' ? 'Ready to Wear' : 'Rental'}</p>`;
+        dressInfo = `
+            <div style="background: #e8f5e9; padding: 15px; border-radius: 8px; margin: 15px 0;">
+                <h4 style="color: #2e7d32; margin-top: 0;">Selected Dress</h4>
+                <p><strong>Dress:</strong> ${selectedDress.name}</p>
+                <p><strong>Price:</strong> ${selectedDress.price}</p>
+                <p><strong>Type:</strong> ${selectedDress.type === 'ready-to-wear' ? 'Ready to Wear' : 'Rental'}</p>
+            </div>
+        `;
     }
 
     const summaryHTML = `
-        <div style="background: #f8f8f8; padding: 15px; border-radius: 5px; margin-bottom: 1rem;">
+        <div style="background: #f8f8f8; padding: 20px; border-radius: 8px; margin-bottom: 1rem;">
             <p><strong>Service:</strong> ${serviceText}</p>
             ${dressInfo}
-            <p><strong>Name:</strong> ${name}</p>
-            <p><strong>Email:</strong> ${email}</p>
-            <p><strong>Phone:</strong> ${phone}</p>
-            ${date ? `<p><strong>Preferred Date:</strong> ${new Date(date).toLocaleDateString()}</p>` : ''}
-            ${notes ? `<p><strong>Special Requests:</strong> ${notes}</p>` : ''}
+            <div style="border-top: 1px solid #ddd; margin: 15px 0; padding-top: 15px;">
+                <p><strong>Customer Information</strong></p>
+                <p><strong>Name:</strong> ${name}</p>
+                <p><strong>Email:</strong> ${email}</p>
+                <p><strong>Phone:</strong> ${phone}</p>
+                ${date ? `<p><strong>Preferred Date:</strong> ${new Date(date).toLocaleDateString()}</p>` : ''}
+                ${notes ? `<p><strong>Special Requests:</strong> ${notes}</p>` : ''}
+            </div>
         </div>
         <p style="color: #5e2c3e; font-weight: bold;">Click "Confirm Booking" to send this directly to Fiona Creations</p>
     `;
 
     document.getElementById('bookingSummary').innerHTML = summaryHTML;
+
+    console.log('Booking summary updated. Selected dress:', selectedDress);
 }
 
-// API Booking Function
+// Enhanced API booking function
 async function submitBooking(bookingData) {
     try {
+        console.log('Sending booking data to API:', JSON.stringify(bookingData, null, 2));
+
         const response = await fetch(API_URL, {
             method: 'POST',
             headers: {
@@ -398,17 +449,38 @@ async function submitBooking(bookingData) {
         });
 
         const result = await response.json();
+        console.log('API response:', result);
 
         if (result.success) {
-            // Show success message
-            alert(`✅ Booking received! Your reference: ${result.bookingId}\n\nFiona will contact you within 24 hours.`);
+            // Show success message with dress details
+            let successMsg = `✅ Booking received! Your reference: ${result.bookingId}`;
+            if (result.dressName) {
+                successMsg += `\n\nDress: ${result.dressName}`;
+                if (result.dressPrice) {
+                    successMsg += `\nPrice: ${result.dressPrice}`;
+                }
+            }
+            if (result.orderTotal && result.orderTotal > 0) {
+                successMsg += `\nTotal: R${result.orderTotal}`;
+            }
+            successMsg += `\n\nFiona will contact you within 24 hours.`;
+
+            alert(successMsg);
 
             // Close modal if open
             closeModal(bookingModal);
 
             // Show success modal
-            document.getElementById('successMessage').textContent =
-                `Thank you! Your booking #${result.bookingId} has been received. Fiona will contact you shortly.`;
+            let successMessage = `Thank you! Your booking #${result.bookingId} has been received.`;
+            if (result.dressName) {
+                successMessage += ` You've selected: ${result.dressName}`;
+            }
+            if (result.orderTotal && result.orderTotal > 0) {
+                successMessage += ` Total amount: R${result.orderTotal}`;
+            }
+            successMessage += ` Fiona will contact you shortly.`;
+
+            document.getElementById('successMessage').textContent = successMessage;
             openModal(successModal);
 
             return true;
@@ -423,7 +495,7 @@ async function submitBooking(bookingData) {
     }
 }
 
-// Enhanced booking form submission with API integration
+// FIXED: Enhanced booking form submission
 document.getElementById('bookingForm').addEventListener('submit', async (e) => {
     e.preventDefault();
 
@@ -434,15 +506,28 @@ document.getElementById('bookingForm').addEventListener('submit', async (e) => {
         email: document.getElementById('bookingEmail').value,
         phone: document.getElementById('bookingPhone').value,
         date: document.getElementById('bookingDate').value,
-        notes: document.getElementById('bookingNotes').value,
-        dress: selectedDress
+        notes: document.getElementById('bookingNotes').value
     };
+
+    // CRITICAL FIX: Add dress information if available
+    if (selectedDress) {
+        formData.dress = {
+            name: selectedDress.name,
+            price: selectedDress.price,
+            type: selectedDress.type
+        };
+
+        console.log('Dress data added to formData:', formData.dress);
+    }
 
     // Validate required fields
     if (!formData.name || !formData.email || !formData.phone) {
         alert('Please fill in all required fields: Name, Email, and Phone.');
         return;
     }
+
+    // Debug: Show what's being sent
+    console.log('Final form data being submitted:', JSON.stringify(formData, null, 2));
 
     try {
         // Show loading state
@@ -474,7 +559,7 @@ document.getElementById('bookingForm').addEventListener('submit', async (e) => {
     }
 });
 
-// Enhanced contact form with email integration
+// Enhanced contact form
 document.getElementById('contactForm').addEventListener('submit', async (e) => {
     e.preventDefault();
 
@@ -558,7 +643,7 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
     });
 });
 
-// Hero Slideshow Functionality - No Controls (Auto-only)
+// Hero Slideshow Functionality
 function initHeroSlideshow() {
     const slides = document.querySelectorAll('.hero-slideshow .slide');
 
@@ -567,17 +652,12 @@ function initHeroSlideshow() {
     let currentSlide = 0;
     let slideInterval;
 
-    // Function to show a specific slide
     function showSlide(index) {
-        // Remove active class from all slides
         slides.forEach(slide => slide.classList.remove('active'));
-
-        // Add active class to current slide
         slides[index].classList.add('active');
         currentSlide = index;
     }
 
-    // Next slide function
     function nextSlide() {
         let nextIndex = currentSlide + 1;
         if (nextIndex >= slides.length) {
@@ -586,34 +666,27 @@ function initHeroSlideshow() {
         showSlide(nextIndex);
     }
 
-    // Auto-advance slides
     function startSlideshow() {
-        slideInterval = setInterval(nextSlide, 4000); // Change slide every 4 seconds
+        slideInterval = setInterval(nextSlide, 4000);
     }
 
-    // Stop slideshow on hover (optional)
     function pauseSlideshow() {
         clearInterval(slideInterval);
     }
 
-    // Resume slideshow when not hovering
     function resumeSlideshow() {
         startSlideshow();
     }
 
-    // Pause on hover (optional - remove if you don't want this)
     const heroSection = document.querySelector('.hero');
     if (heroSection) {
         heroSection.addEventListener('mouseenter', pauseSlideshow);
         heroSection.addEventListener('mouseleave', resumeSlideshow);
-
-        // Touch events for mobile
         heroSection.addEventListener('touchstart', pauseSlideshow);
         heroSection.addEventListener('touchend', resumeSlideshow);
     }
 
-    // Start the slideshow
-    showSlide(0); // Show first slide immediately
+    showSlide(0);
     startSlideshow();
 }
 

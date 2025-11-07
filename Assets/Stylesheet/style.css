@@ -81,16 +81,53 @@ nav {
 }
 
 .hero h1 {
-    font-size: 3.5rem;
+    font-size: 2.5rem;
     margin-bottom: 1rem;
     text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
 }
 
 .hero p {
-    font-size: 1.2rem;
+    font-size: 1rem;
     max-width: 700px;
     margin-bottom: 2rem;
     text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+}
+
+/* ===== HERO BUTTONS STYLING ===== */
+.hero-buttons {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+    justify-content: center;
+    margin-top: 2rem;
+}
+
+.hero-buttons .btn {
+    min-width: 160px;
+    text-align: center;
+}
+
+/* Make the Book Consultation button stand out */
+.hero-buttons .btn-outline {
+    background: transparent;
+    border: 2px solid var(--light);
+    color: var(--light);
+}
+
+.hero-buttons .btn-outline:hover {
+    background: var(--light);
+    color: var(--secondary);
+}
+
+@media (max-width: 768px) {
+    .hero-buttons {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .hero-buttons .btn {
+        width: 200px;
+    }
 }
 
 .btn {
@@ -109,6 +146,12 @@ nav {
 .btn:hover {
     background-color: transparent;
     color: var(--secondary);
+}
+
+.btn-outline {
+    background: transparent;
+    color: var(--secondary);
+    border: 2px solid var(--secondary);
 }
 
 .btn-outline:hover {
@@ -1099,4 +1142,27 @@ footer {
 
 .modal {
     z-index: 1000;
+}
+
+.hero-buttons {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+    justify-content: center;
+    margin-top: 2rem;
+}
+
+.hero-buttons .btn {
+    min-width: 160px;
+}
+
+@media (max-width: 768px) {
+    .hero-buttons {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .hero-buttons .btn {
+        width: 200px;
+    }
 }
