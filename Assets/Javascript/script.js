@@ -1,3 +1,6 @@
+// API Configuration
+const API_URL = 'https://qf4g026084.execute-api.eu-north-1.amazonaws.com/Production/bookings';
+
 // Mobile menu toggle
 const mobileMenuBtn = document.getElementById('mobileMenuBtn');
 const navLinks = document.getElementById('navLinks');
@@ -383,44 +386,44 @@ function updateBookingSummary() {
     document.getElementById('bookingSummary').innerHTML = summaryHTML;
 }
 
-// Simple email booking solution - NO BACKEND REQUIRED
-function submitBookingSimple(bookingData) {
-    const dressInfo = bookingData.dress ?
-        `Selected dress:    ${bookingData.dress.name}
-         Price:             ${bookingData.dress.price} 
-         Type:              ${bookingData.dress.type}` :
-        `SERVICE REQUESTED: ${bookingData.service}`;
+// API Booking Function
+async function submitBooking(bookingData) {
+    try {
+        const response = await fetch(API_URL, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(bookingData)
+        });
 
-    const subject = `🎀 New Booking : ${bookingData.name}`;
+        const result = await response.json();
 
-    const body = `
-NEW BOOKING FROM FIONA CREATIONS WEBSITE
+        if (result.success) {
+            // Show success message
+            alert(`✅ Booking received! Your reference: ${result.bookingId}\n\nFiona will contact you within 24 hours.`);
 
-Customer Details
-Name:   ${bookingData.name}
-Email:  ${bookingData.email}
-Phone:  ${bookingData.phone}
+            // Close modal if open
+            closeModal(bookingModal);
 
-${dressInfo}
-Preferred Date:     ${bookingData.date || 'Not specified'}
-Special Requests:   ${bookingData.notes || 'None'}
-Submitted: ${new Date().toLocaleString('en-ZA', { timeZone: 'Africa/Johannesburg' })}
-From: Fiona Creations Booking System
+            // Show success modal
+            document.getElementById('successMessage').textContent =
+                `Thank you! Your booking #${result.bookingId} has been received. Fiona will contact you shortly.`;
+            openModal(successModal);
 
-
-
-    `.trim();
-
-    // Open email client with pre-filled details
-    const mailtoLink = `mailto:fionacreations21@gmail.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
-
-    // Try to open email client
-    window.open(mailtoLink, '_blank');
-
-    return Promise.resolve();
+            return true;
+        } else {
+            alert('❌ Booking failed: ' + (result.message || result.error));
+            return false;
+        }
+    } catch (error) {
+        console.error('Error:', error);
+        alert('❌ Network error. Please try again or contact Fiona directly at 064 373 9810');
+        return false;
+    }
 }
 
-// Enhanced booking form submission with email integration
+// Enhanced booking form submission with API integration
 document.getElementById('bookingForm').addEventListener('submit', async (e) => {
     e.preventDefault();
 
@@ -432,8 +435,7 @@ document.getElementById('bookingForm').addEventListener('submit', async (e) => {
         phone: document.getElementById('bookingPhone').value,
         date: document.getElementById('bookingDate').value,
         notes: document.getElementById('bookingNotes').value,
-        dress: selectedDress,
-        timestamp: new Date().toISOString()
+        dress: selectedDress
     };
 
     // Validate required fields
@@ -446,34 +448,23 @@ document.getElementById('bookingForm').addEventListener('submit', async (e) => {
         // Show loading state
         const submitBtn = document.querySelector('#bookingForm button[type="submit"]');
         const originalText = submitBtn.textContent;
-        submitBtn.textContent = 'Sending...';
+        submitBtn.textContent = 'Booking...';
         submitBtn.disabled = true;
 
-        // Submit via email
-        await submitBookingSimple(formData);
+        // Submit via API
+        const success = await submitBooking(formData);
 
-        // Success - show confirmation modal
-        closeModal(bookingModal);
-
-        // Update success message based on booking type
-        let successMessage = `Thank you ${formData.name}! Your booking request has been sent to Fiona Creations.`;
-        if (formData.dress) {
-            successMessage += ` We've received your interest in the "${formData.dress.name}".`;
+        if (success) {
+            // Success - reset everything
+            resetBookingForm();
         }
-        successMessage += ` Fiona will contact you shortly to confirm your booking.`;
 
-        document.getElementById('successMessage').textContent = successMessage;
-        openModal(successModal);
-
-        // Reset everything - IMPORTANT: This happens after success
-        resetBookingForm();
-
-        // Reset button
+        // Reset button state
         submitBtn.textContent = originalText;
         submitBtn.disabled = false;
 
     } catch (error) {
-        alert('There was an error preparing your booking. Please try again or contact us directly at fionacreations21@gmail.com');
+        alert('There was an error processing your booking. Please try again or contact us directly at fionacreations21@gmail.com');
         console.error('Booking error:', error);
 
         // Reset button state
