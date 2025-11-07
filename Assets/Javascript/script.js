@@ -374,7 +374,7 @@ function goToStep(stepNumber) {
     }
 }
 
-// Enhanced booking summary with dress information
+// Enhanced booking summary with banking details
 function updateBookingSummary() {
     const service = document.getElementById('bookingService').value;
     const name = document.getElementById('bookingName').value;
@@ -414,6 +414,19 @@ function updateBookingSummary() {
         `;
     }
 
+    // Banking details section
+    const bankingDetails = `
+        <div style="background: #fff3cd; padding: 15px; border-radius: 8px; margin: 15px 0; border-left: 4px solid #ffc107;">
+            <h4 style="color: #856404; margin-top: 0;">💳 Payment Information</h4>
+            <p><strong>Bank:</strong> Capitec Business</p>
+            <p><strong>Account Name:</strong> Fiona Creations</p>
+            <p><strong>Account Number:</strong> 1053 5216 93</p>
+            <p style="font-size: 0.9rem; margin-top: 10px; color: #856404;">
+                <strong>Please use your name as reference when making payment.</strong>
+            </p>
+        </div>
+    `;
+
     const summaryHTML = `
         <div style="background: #f8f8f8; padding: 20px; border-radius: 8px; margin-bottom: 1rem;">
             <p><strong>Service:</strong> ${serviceText}</p>
@@ -426,8 +439,9 @@ function updateBookingSummary() {
                 ${date ? `<p><strong>Preferred Date:</strong> ${new Date(date).toLocaleDateString()}</p>` : ''}
                 ${notes ? `<p><strong>Special Requests:</strong> ${notes}</p>` : ''}
             </div>
+            ${bankingDetails}
         </div>
-        <p style="color: #5e2c3e; font-weight: bold;">Click "Confirm Booking" to send this directly to Fiona Creations</p>
+        <p style="color: #5e2c3e; font-weight: bold;">Click "Confirm Booking" to complete your reservation</p>
     `;
 
     document.getElementById('bookingSummary').innerHTML = summaryHTML;
@@ -435,7 +449,52 @@ function updateBookingSummary() {
     console.log('Booking summary updated. Selected dress:', selectedDress);
 }
 
-// Enhanced API booking function
+// Enhanced success modal with banking details
+function showSuccessWithBankingDetails(bookingData, result) {
+    let successMessage = `
+        <div style="text-align: center;">
+            <div style="font-size: 4rem; color: #28a745; margin-bottom: 1rem;">✅</div>
+            <h2 style="color: #5e2c3e; margin-bottom: 1rem;">Booking Confirmed!</h2>
+            <p style="margin-bottom: 1.5rem; font-size: 1.1rem;">
+                Thank you! Your booking <strong>#${result.bookingId}</strong> has been received.
+            </p>
+    `;
+
+    if (result.dressName) {
+        successMessage += `
+            <div style="background: #e8f5e9; padding: 15px; border-radius: 8px; margin: 15px 0;">
+                <h4 style="color: #2e7d32; margin-top: 0;">Your Selection</h4>
+                <p><strong>Dress:</strong> ${result.dressName}</p>
+                ${result.dressPrice ? `<p><strong>Price:</strong> ${result.dressPrice}</p>` : ''}
+                ${result.orderTotal && result.orderTotal > 0 ? `<p><strong>Total Amount:</strong> R${result.orderTotal}</p>` : ''}
+            </div>
+        `;
+    }
+
+    successMessage += `
+        <div style="background: #d1ecf1; padding: 20px; border-radius: 8px; margin: 20px 0; text-align: left;">
+            <h4 style="color: #0c5460; margin-top: 0;">💰 Payment Instructions</h4>
+            <p><strong>Please make payment to:</strong></p>
+            <div style="background: white; padding: 15px; border-radius: 5px; margin: 10px 0;">
+                <p><strong>Bank:</strong> Capitec Business</p>
+                <p><strong>Account Name:</strong> Fiona Creations</p>
+                <p><strong>Account Number:</strong> 1053 5216 93</p>
+                <p><strong>Reference:</strong> ${result.bookingId} or your name</p>
+            </div>
+            <p style="color: #0c5460; font-size: 0.9rem;">
+                <strong>📞 Next Steps:</strong> Fiona will contact you within 24 hours to confirm your booking details and discuss delivery/collection.
+            </p>
+        </div>
+        <p style="color: #6c757d; font-size: 0.9rem;">
+            A confirmation email has been sent to ${bookingData.email} with these details.
+        </p>
+    `;
+
+    document.getElementById('successMessage').innerHTML = successMessage;
+    openModal(successModal);
+}
+
+// Update the API booking function to use the new success modal
 async function submitBooking(bookingData) {
     try {
         console.log('Sending booking data to API:', JSON.stringify(bookingData, null, 2));
@@ -452,7 +511,7 @@ async function submitBooking(bookingData) {
         console.log('API response:', result);
 
         if (result.success) {
-            // Show success message with dress details
+            // Show success message with banking details
             let successMsg = `✅ Booking received! Your reference: ${result.bookingId}`;
             if (result.dressName) {
                 successMsg += `\n\nDress: ${result.dressName}`;
@@ -463,6 +522,7 @@ async function submitBooking(bookingData) {
             if (result.orderTotal && result.orderTotal > 0) {
                 successMsg += `\nTotal: R${result.orderTotal}`;
             }
+            successMsg += `\n\nPayment Details:\nBank: Capitec Business\nAccount: 1053 5216 93\nReference: ${result.bookingId}`;
             successMsg += `\n\nFiona will contact you within 24 hours.`;
 
             alert(successMsg);
@@ -470,18 +530,8 @@ async function submitBooking(bookingData) {
             // Close modal if open
             closeModal(bookingModal);
 
-            // Show success modal
-            let successMessage = `Thank you! Your booking #${result.bookingId} has been received.`;
-            if (result.dressName) {
-                successMessage += ` You've selected: ${result.dressName}`;
-            }
-            if (result.orderTotal && result.orderTotal > 0) {
-                successMessage += ` Total amount: R${result.orderTotal}`;
-            }
-            successMessage += ` Fiona will contact you shortly.`;
-
-            document.getElementById('successMessage').textContent = successMessage;
-            openModal(successModal);
+            // Show enhanced success modal with banking details
+            showSuccessWithBankingDetails(bookingData, result);
 
             return true;
         } else {
