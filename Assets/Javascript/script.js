@@ -16,44 +16,6 @@ document.querySelectorAll('.nav-links a').forEach(link => {
     });
 });
 
-// Testimonial slider
-const testimonials = document.querySelectorAll('.testimonial');
-const dots = document.querySelectorAll('.dot');
-
-dots.forEach(dot => {
-    dot.addEventListener('click', () => {
-        const slideIndex = dot.getAttribute('data-slide');
-
-        testimonials.forEach(testimonial => {
-            testimonial.classList.remove('active');
-        });
-
-        dots.forEach(d => {
-            d.classList.remove('active');
-        });
-
-        testimonials[slideIndex].classList.add('active');
-        dot.classList.add('active');
-    });
-});
-
-// Auto-advance testimonials
-let currentTestimonial = 0;
-setInterval(() => {
-    currentTestimonial = (currentTestimonial + 1) % testimonials.length;
-
-    testimonials.forEach(testimonial => {
-        testimonial.classList.remove('active');
-    });
-
-    dots.forEach(dot => {
-        dot.classList.remove('active');
-    });
-
-    testimonials[currentTestimonial].classList.add('active');
-    dots[currentTestimonial].classList.add('active');
-}, 5000);
-
 // Image slider functionality
 function initImageSliders() {
     const sliders = document.querySelectorAll('.image-slider');
@@ -66,52 +28,33 @@ function initImageSliders() {
 
         let currentIndex = 0;
 
-        // Function to show a specific slide
         function showSlide(index) {
-            // Hide all images
             images.forEach(img => img.classList.remove('active'));
-
-            // Remove active class from all dots
             dots.forEach(dot => dot.classList.remove('active'));
 
-            // Show the selected image
             images[index].classList.add('active');
-
-            // Activate the corresponding dot
-            if (dots[index]) {
-                dots[index].classList.add('active');
-            }
-
+            if (dots[index]) dots[index].classList.add('active');
             currentIndex = index;
         }
 
-        // Next slide
         if (nextArrow) {
             nextArrow.addEventListener('click', () => {
                 let nextIndex = currentIndex + 1;
-                if (nextIndex >= images.length) {
-                    nextIndex = 0;
-                }
+                if (nextIndex >= images.length) nextIndex = 0;
                 showSlide(nextIndex);
             });
         }
 
-        // Previous slide
         if (prevArrow) {
             prevArrow.addEventListener('click', () => {
                 let prevIndex = currentIndex - 1;
-                if (prevIndex < 0) {
-                    prevIndex = images.length - 1;
-                }
+                if (prevIndex < 0) prevIndex = images.length - 1;
                 showSlide(prevIndex);
             });
         }
 
-        // Dot navigation
         dots.forEach((dot, index) => {
-            dot.addEventListener('click', () => {
-                showSlide(index);
-            });
+            dot.addEventListener('click', () => showSlide(index));
         });
     });
 }
@@ -127,38 +70,31 @@ const closeDressModal = document.getElementById('closeDressModal');
 const closeSuccessModal = document.getElementById('closeSuccessModal');
 const closeSuccessBtn = document.getElementById('closeSuccessBtn');
 const viewDressBtns = document.querySelectorAll('.view-dress-btn');
-const bookServiceBtns = document.querySelectorAll('.book-service-btn');
+const getThisLookBtns = document.querySelectorAll('.get-this-look-btn');
 const bookDressBtn = document.querySelector('.book-dress-btn');
 
-// Store selected dress information
 let selectedDress = null;
 let isDressBooking = false;
 
-// Function to open modal with blur
+// Modal functions
 function openModal(modal) {
     modal.style.display = 'flex';
     document.body.classList.add('body-blur');
 }
 
-// Function to close modal and remove blur
 function closeModal(modal) {
     modal.style.display = 'none';
     document.body.classList.remove('body-blur');
 }
 
-// Enhanced function to reset booking form completely
 function resetBookingForm() {
     selectedDress = null;
     isDressBooking = false;
     document.getElementById('bookingForm').reset();
-    if (isDressBooking) {
-        goToStep('2');
-    } else {
-        goToStep('1');
-    }
+    goToStep(isDressBooking ? '2' : '1');
 }
 
-// Open booking modal for general consultation
+// Event listeners
 bookNowBtn.addEventListener('click', (e) => {
     e.preventDefault();
     isDressBooking = false;
@@ -173,135 +109,76 @@ heroBookBtn.addEventListener('click', (e) => {
     openModal(bookingModal);
 });
 
-// Service buttons (for custom and styling services)
-bookServiceBtns.forEach(btn => {
-    btn.addEventListener('click', (e) => {
-        e.preventDefault();
-        isDressBooking = false;
-        resetBookingForm();
-        openModal(bookingModal);
-        const service = btn.getAttribute('data-service');
-        document.getElementById('bookingService').value = service;
-        goToStep('2');
-    });
-});
-
-// Enhanced dress modal setup with dress storage
+// Dress modal setup
 function setupDressModal(buttons, isReadyToWear = false) {
     buttons.forEach(btn => {
         btn.addEventListener('click', (e) => {
             e.preventDefault();
 
-            // Get dress data from button attributes
-            const dressName = btn.getAttribute('data-dress');
-            const dressPrice = btn.getAttribute('data-price');
-            const dressImages = JSON.parse(btn.getAttribute('data-images') || '[]');
-            const dressDesc = btn.getAttribute('data-desc');
-            const dressSpecs = btn.getAttribute('data-specs');
-
-            // Store selected dress info globally
             selectedDress = {
-                name: dressName,
-                price: dressPrice,
+                name: btn.getAttribute('data-dress'),
+                price: btn.getAttribute('data-price'),
                 type: isReadyToWear ? 'ready-to-wear' : 'rental',
-                images: dressImages,
-                description: dressDesc,
-                specifications: dressSpecs
+                images: JSON.parse(btn.getAttribute('data-images') || '[]'),
+                description: btn.getAttribute('data-desc'),
+                specifications: btn.getAttribute('data-specs')
             };
 
-            console.log('Selected dress stored:', selectedDress);
+            document.getElementById('dressModalTitle').textContent = selectedDress.name;
+            document.getElementById('dressModalPrice').textContent = selectedDress.price;
 
-            // Populate modal with dress data
-            document.getElementById('dressModalTitle').textContent = dressName;
-            document.getElementById('dressModalPrice').textContent = dressPrice;
-
-            // Use the first image as default in modal
-            if (dressImages.length > 0) {
-                document.getElementById('dressModalImg').src = dressImages[0];
-                document.getElementById('dressModalImg').alt = dressName;
+            if (selectedDress.images.length > 0) {
+                document.getElementById('dressModalImg').src = selectedDress.images[0];
+                document.getElementById('dressModalImg').alt = selectedDress.name;
             }
 
-            document.getElementById('dressModalDesc').textContent = dressDesc || '';
+            document.getElementById('dressModalDesc').textContent = selectedDress.description || '';
 
-            // Clear existing specs
             const specsList = document.getElementById('dressModalSpecs');
             specsList.innerHTML = '';
-
-            // Add new specs
-            const specsArray = dressSpecs.split('|');
-            specsArray.forEach(spec => {
+            selectedDress.specifications.split('|').forEach(spec => {
                 const li = document.createElement('li');
                 li.textContent = spec;
                 specsList.appendChild(li);
             });
 
-            // Change button text for ready-to-wear items
             const modalBookBtn = document.querySelector('.book-dress-btn');
-            if (isReadyToWear) {
-                modalBookBtn.textContent = 'Get This Look';
-            } else {
-                modalBookBtn.textContent = 'Reserve This Dress';
-            }
+            modalBookBtn.textContent = isReadyToWear ? 'Get This Look' : 'Reserve This Dress';
 
-            // Show modal
             openModal(dressModal);
         });
     });
 }
 
-// Set up modals for both rental and ready-to-wear items
-setupDressModal(document.querySelectorAll('.view-dress-btn'));
-setupDressModal(document.querySelectorAll('.get-this-look-btn'), true);
+setupDressModal(viewDressBtns);
+setupDressModal(getThisLookBtns, true);
 
-// Book dress button in dress modal
 bookDressBtn.addEventListener('click', () => {
     closeModal(dressModal);
     isDressBooking = true;
-
-    // Reset form and open booking modal
     document.getElementById('bookingForm').reset();
-
-    // Set service type automatically based on dress type
-    const serviceType = selectedDress.type === 'ready-to-wear' ? 'ready-to-wear' : 'rental';
-    document.getElementById('bookingService').value = serviceType;
-
-    console.log('Dress booking - Service auto-set to:', serviceType);
-
-    // Open booking modal and skip to details step
+    document.getElementById('bookingService').value = selectedDress.type === 'ready-to-wear' ? 'ready-to-wear' : 'rental';
     openModal(bookingModal);
     goToStep('2');
 });
 
-// Close modals
+// Close modal handlers
 closeBookingModal.addEventListener('click', () => {
     closeModal(bookingModal);
     resetBookingForm();
 });
 
-closeDressModal.addEventListener('click', () => {
-    closeModal(dressModal);
-});
+closeDressModal.addEventListener('click', () => closeModal(dressModal));
+closeSuccessModal.addEventListener('click', () => closeModal(successModal));
+closeSuccessBtn.addEventListener('click', () => closeModal(successModal));
 
-closeSuccessModal.addEventListener('click', () => {
-    closeModal(successModal);
-});
-
-closeSuccessBtn.addEventListener('click', () => {
-    closeModal(successModal);
-});
-
-// Close modal when clicking outside
 window.addEventListener('click', (e) => {
     if (e.target === bookingModal) {
         closeModal(bookingModal);
         resetBookingForm();
     }
-    if (e.target === dressModal) {
-        closeModal(dressModal);
-    }
-    if (e.target === successModal) {
-        closeModal(successModal);
-    }
+    if (e.target === dressModal) closeModal(dressModal);
+    if (e.target === successModal) closeModal(successModal);
 });
 
 // Booking form steps
@@ -311,30 +188,18 @@ const nextStepBtns = document.querySelectorAll('.next-step');
 const prevStepBtns = document.querySelectorAll('.prev-step');
 
 nextStepBtns.forEach(btn => {
-    btn.addEventListener('click', () => {
-        const nextPage = btn.getAttribute('data-next');
-        goToStep(nextPage);
-    });
+    btn.addEventListener('click', () => goToStep(btn.getAttribute('data-next')));
 });
 
 prevStepBtns.forEach(btn => {
-    btn.addEventListener('click', () => {
-        const prevPage = btn.getAttribute('data-prev');
-        goToStep(prevPage);
-    });
+    btn.addEventListener('click', () => goToStep(btn.getAttribute('data-prev')));
 });
 
 function goToStep(stepNumber) {
-    // For dress bookings, skip step 1 (service selection)
-    if (isDressBooking && stepNumber === '1') {
-        stepNumber = '2';
-    }
+    if (isDressBooking && stepNumber === '1') stepNumber = '2';
 
-    // Update steps
     bookingSteps.forEach(step => {
         const stepNum = step.getAttribute('data-step');
-
-        // Hide step 1 for dress bookings
         if (isDressBooking && stepNum === '1') {
             step.style.display = 'none';
         } else {
@@ -348,16 +213,11 @@ function goToStep(stepNumber) {
             step.classList.remove('completed', 'active');
         }
 
-        if (stepNum === stepNumber) {
-            step.classList.add('active');
-        }
+        if (stepNum === stepNumber) step.classList.add('active');
     });
 
-    // Update pages
     bookingPages.forEach(page => {
         const pageNum = page.getAttribute('data-page');
-
-        // Hide page 1 for dress bookings
         if (isDressBooking && pageNum === '1') {
             page.classList.remove('active');
         } else if (pageNum === stepNumber) {
@@ -367,13 +227,18 @@ function goToStep(stepNumber) {
         }
     });
 
-    // If going to confirmation page, update summary
-    if (stepNumber === '3') {
-        updateBookingSummary();
-    }
+    if (stepNumber === '3') updateBookingSummary();
 }
 
-// Updated booking summary with proper date formatting
+// Date formatting
+function formatDateForDisplay(dateString) {
+    if (!dateString) return '';
+    const date = new Date(dateString);
+    const options = { day: 'numeric', month: 'long', year: 'numeric' };
+    return date.toLocaleDateString('en-ZA', options);
+}
+
+// Booking summary
 function updateBookingSummary() {
     const service = document.getElementById('bookingService').value;
     const name = document.getElementById('bookingName').value;
@@ -382,28 +247,15 @@ function updateBookingSummary() {
     const date = document.getElementById('bookingDate').value;
     const notes = document.getElementById('bookingNotes').value;
 
-    let serviceText = '';
-    switch (service) {
-        case 'rental':
-            serviceText = 'Dress Rental';
-            break;
-        case 'custom':
-            serviceText = 'Custom-Made Dress';
-            break;
-        case 'styling':
-            serviceText = 'Personal Styling Service';
-            break;
-        case 'ready-to-wear':
-            serviceText = 'Ready to Wear';
-            break;
-        default:
-            serviceText = 'Service';
-    }
+    const serviceText = {
+        'rental': 'Dress Rental',
+        'custom': 'Custom-Made Dress',
+        'styling': 'Personal Styling Service',
+        'ready-to-wear': 'Ready to Wear'
+    }[service] || 'Service';
 
-    // Format date properly
     const formattedDate = date ? formatDateForDisplay(date) : '';
 
-    // Add dress information if available
     let dressInfo = '';
     if (selectedDress) {
         dressInfo = `
@@ -488,27 +340,42 @@ function updateBookingSummary() {
     document.getElementById('bookingSummary').innerHTML = summaryHTML;
 }
 
-// UPDATED SUCCESS MODAL - Only shows on actual success
+// API functions
+async function submitBooking(bookingData) {
+    try {
+        const response = await fetch(API_URL, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(bookingData)
+        });
+
+        const result = await response.json();
+
+        if (response.ok && result.success) {
+            closeModal(bookingModal);
+            showSuccessWithBankingDetails(bookingData, result);
+            return true;
+        } else {
+            showErrorModal('Booking Failed', result.message || result.error || 'There was an issue processing your booking.');
+            return false;
+        }
+    } catch (error) {
+        showErrorModal('Connection Error', 'Unable to process your booking. Please try again or contact Fiona directly.');
+        return false;
+    }
+}
+
 function showSuccessWithBankingDetails(bookingData, result) {
-    // Format date properly
     const formattedDate = bookingData.date ? formatDateForDisplay(bookingData.date) : '';
 
     const successMessage = `
         <div style="text-align: center; padding: 30px 20px;">
-            <!-- Simple Checkmark -->
             <div style="font-size: 3rem; color: #5e2c3e; margin-bottom: 1rem;">✓</div>
-            
-            <!-- Clean Title -->
-            <h2 style="color: #5e2c3e; margin-bottom: 1rem; font-size: 1.5rem; font-weight: 600; font-family: 'Playfair Display', serif;">
-                Booking Confirmed!
-            </h2>
-            
-            <!-- Simple Message -->
+            <h2 style="color: #5e2c3e; margin-bottom: 1rem; font-size: 1.5rem; font-weight: 600;">Booking Confirmed!</h2>
             <p style="margin-bottom: 2rem; color: #666; line-height: 1.5;">
                 Thank you, <strong>${bookingData.name}</strong>. Your booking <strong>#${result.bookingId}</strong> has been received.
             </p>
 
-            <!-- Minimal Booking Details -->
             <div style="border: 1px solid #e0e0e0; padding: 20px; border-radius: 8px; margin: 20px 0; text-align: left;">
                 <h4 style="color: #5e2c3e; margin-top: 0; margin-bottom: 15px; font-size: 1rem; font-weight: 600;">Booking Details</h4>
                 
@@ -533,7 +400,6 @@ function showSuccessWithBankingDetails(bookingData, result) {
                 </div>
             </div>
 
-            <!-- Clean Payment Information -->
             <div style="border: 1px solid #e0e0e0; padding: 20px; border-radius: 8px; margin: 20px 0; text-align: left;">
                 <h4 style="color: #5e2c3e; margin-top: 0; margin-bottom: 15px; font-size: 1rem; font-weight: 600;">Payment Details</h4>
                 
@@ -549,7 +415,6 @@ function showSuccessWithBankingDetails(bookingData, result) {
                 </p>
             </div>
 
-            <!-- Simple Next Steps -->
             <div style="margin: 25px 0;">
                 <h4 style="color: #5e2c3e; margin-bottom: 12px; font-size: 1rem; font-weight: 600;">What happens next</h4>
                 <div style="font-size: 0.9rem; color: #666; line-height: 1.6;">
@@ -559,18 +424,14 @@ function showSuccessWithBankingDetails(bookingData, result) {
                 </div>
             </div>
 
-            <!-- Email Confirmation -->
             <div style="background: #f8f9fa; padding: 15px; border-radius: 6px; margin: 20px 0;">
                 <p style="margin: 0; color: #666; font-size: 0.9rem;">
                     A confirmation email has been sent to <strong>${bookingData.email}</strong>
                 </p>
             </div>
 
-            <!-- Contact Information -->
             <div style="margin-top: 25px; padding-top: 20px; border-top: 1px solid #e0e0e0;">
-                <p style="margin: 5px 0; color: #666; font-size: 0.85rem;">
-                    Questions? Contact Fiona directly
-                </p>
+                <p style="margin: 5px 0; color: #666; font-size: 0.85rem;">Questions? Contact Fiona directly</p>
                 <p style="margin: 8px 0;">
                     <a href="mailto:fionacreations21@gmail.com" style="color: #5e2c3e; text-decoration: none; font-size: 0.9rem;">
                         fionacreations21@gmail.com
@@ -589,53 +450,11 @@ function showSuccessWithBankingDetails(bookingData, result) {
     openModal(successModal);
 }
 
-// Updated API booking function with proper error handling
-async function submitBooking(bookingData) {
-    try {
-        console.log('Sending booking data to API:', JSON.stringify(bookingData, null, 2));
-
-        const response = await fetch(API_URL, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(bookingData)
-        });
-
-        const result = await response.json();
-        console.log('API response:', result);
-
-        if (response.ok && result.success) {
-            // Close booking modal
-            closeModal(bookingModal);
-
-            // Show professional success modal
-            showSuccessWithBankingDetails(bookingData, result);
-
-            return true;
-        } else {
-            // Show proper error modal
-            showErrorModal('Booking Failed', result.message || result.error || 'There was an issue processing your booking. Please try again.');
-            return false;
-        }
-    } catch (error) {
-        console.error('Error:', error);
-        showErrorModal(
-            'Connection Error',
-            'Unable to process your booking at this time. Please try again or contact Fiona directly at 064 373 9810.'
-        );
-        return false;
-    }
-}
-
-// PROPER ERROR MODAL - Completely different from success
 function showErrorModal(title, message) {
     const errorHTML = `
         <div style="text-align: center; padding: 30px 20px;">
             <div style="font-size: 3rem; color: #dc3545; margin-bottom: 1rem;">✗</div>
-            <h2 style="color: #dc3545; margin-bottom: 1rem; font-size: 1.5rem; font-weight: 600; font-family: 'Playfair Display', serif;">
-                ${title}
-            </h2>
+            <h2 style="color: #dc3545; margin-bottom: 1rem; font-size: 1.5rem; font-weight: 600;">${title}</h2>
             <p style="color: #666; line-height: 1.5; margin-bottom: 2rem;">${message}</p>
             <button class="btn" onclick="closeModal(successModal)" style="background: #dc3545; border-color: #dc3545;">
                 Try Again
@@ -647,11 +466,10 @@ function showErrorModal(title, message) {
     openModal(successModal);
 }
 
-// Enhanced booking form submission
+// Booking form submission
 document.getElementById('bookingForm').addEventListener('submit', async (e) => {
     e.preventDefault();
 
-    // Get all form data
     const formData = {
         service: document.getElementById('bookingService').value,
         name: document.getElementById('bookingName').value,
@@ -661,7 +479,6 @@ document.getElementById('bookingForm').addEventListener('submit', async (e) => {
         notes: document.getElementById('bookingNotes').value
     };
 
-    // Add dress information if available
     if (selectedDress) {
         formData.dress = {
             name: selectedDress.name,
@@ -670,47 +487,29 @@ document.getElementById('bookingForm').addEventListener('submit', async (e) => {
         };
     }
 
-    // Validate required fields
     if (!formData.name || !formData.email || !formData.phone) {
         showErrorModal('Missing Information', 'Please fill in all required fields: Name, Email, and Phone.');
         return;
     }
 
+    const submitBtn = document.querySelector('#bookingForm button[type="submit"]');
+    const originalText = submitBtn.textContent;
+    submitBtn.textContent = 'Processing...';
+    submitBtn.disabled = true;
+
     try {
-        // Show loading state
-        const submitBtn = document.querySelector('#bookingForm button[type="submit"]');
-        const originalText = submitBtn.textContent;
-        submitBtn.textContent = 'Processing...';
-        submitBtn.disabled = true;
-
-        // Submit via API
         const success = await submitBooking(formData);
-
-        if (success) {
-            // Success - reset everything
-            resetBookingForm();
-        }
-
-        // Reset button state
-        submitBtn.textContent = originalText;
-        submitBtn.disabled = false;
-
+        if (success) resetBookingForm();
     } catch (error) {
-        console.error('Booking error:', error);
-        showErrorModal(
-            'Unexpected Error',
-            'There was an unexpected error processing your booking. Please contact us directly at fionacreations21@gmail.com'
-        );
-
-        // Reset button state
-        const submitBtn = document.querySelector('#bookingForm button[type="submit"]');
-        submitBtn.textContent = 'Confirm Booking';
-        submitBtn.disabled = false;
+        showErrorModal('Unexpected Error', 'There was an unexpected error. Please contact us directly.');
     }
+
+    submitBtn.textContent = originalText;
+    submitBtn.disabled = false;
 });
 
-// Enhanced contact form
-document.getElementById('contactForm').addEventListener('submit', async (e) => {
+// Contact form
+document.getElementById('contactForm').addEventListener('submit', (e) => {
     e.preventDefault();
 
     const formData = {
@@ -718,11 +517,9 @@ document.getElementById('contactForm').addEventListener('submit', async (e) => {
         email: document.getElementById('email').value,
         phone: document.getElementById('phone').value,
         service: document.getElementById('service').value,
-        message: document.getElementById('message').value,
-        type: 'general-inquiry'
+        message: document.getElementById('message').value
     };
 
-    // Validate required fields
     if (!formData.name || !formData.email || !formData.message) {
         showErrorModal('Missing Information', 'Please fill in all required fields: Name, Email, and Message.');
         return;
@@ -748,78 +545,55 @@ ADDITIONAL INFORMATION:
 - Type: General Inquiry
     `.trim();
 
-    try {
-        // Show loading state
-        const submitBtn = document.querySelector('#contactForm button[type="submit"]');
-        const originalText = submitBtn.textContent;
-        submitBtn.textContent = 'Sending...';
-        submitBtn.disabled = true;
+    const submitBtn = document.querySelector('#contactForm button[type="submit"]');
+    const originalText = submitBtn.textContent;
+    submitBtn.textContent = 'Sending...';
+    submitBtn.disabled = true;
 
+    try {
         window.open(`mailto:fionacreations21@gmail.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`, '_blank');
 
-        // Show success message for contact form
-        // In the contact form submit handler, replace the success section with:
         const contactSuccessHTML = `
-    <div style="text-align: center; padding: 30px 20px;">
-        <div style="font-size: 3rem; color: #5e2c3e; margin-bottom: 1rem;">✓</div>
-        <h2 style="color: #5e2c3e; margin-bottom: 1rem; font-size: 1.5rem; font-weight: 600; font-family: 'Playfair Display', serif;">
-            Message Sent
-        </h2>
-        <p style="color: #666; line-height: 1.5; margin-bottom: 1rem;">
-            Thank you, <strong>${formData.name}</strong>. Your message has been sent to Fiona Creations.
-        </p>
-        <p style="color: #666; font-size: 0.9rem;">
-            We will get back to you within 24 hours.
-        </p>
-    </div>
-`;
+            <div style="text-align: center; padding: 30px 20px;">
+                <div style="font-size: 3rem; color: #5e2c3e; margin-bottom: 1rem;">✓</div>
+                <h2 style="color: #5e2c3e; margin-bottom: 1rem; font-size: 1.5rem; font-weight: 600;">Message Sent</h2>
+                <p style="color: #666; line-height: 1.5; margin-bottom: 1rem;">
+                    Thank you, <strong>${formData.name}</strong>. Your message has been sent to Fiona Creations.
+                </p>
+                <p style="color: #666; font-size: 0.9rem;">We will get back to you within 24 hours.</p>
+            </div>
+        `;
 
         document.getElementById('successMessage').innerHTML = contactSuccessHTML;
         openModal(successModal);
         document.getElementById('contactForm').reset();
-
-        // Reset button
-        submitBtn.textContent = originalText;
-        submitBtn.disabled = false;
-
     } catch (error) {
-        showErrorModal(
-            'Message Failed',
-            'There was an error sending your message. Please try again or contact us directly at fionacreations21@gmail.com'
-        );
-
-        // Reset button state
-        const submitBtn = document.querySelector('#contactForm button[type="submit"]');
-        submitBtn.textContent = 'Send Message';
-        submitBtn.disabled = false;
+        showErrorModal('Message Failed', 'There was an error sending your message. Please try again.');
     }
+
+    submitBtn.textContent = originalText;
+    submitBtn.disabled = false;
 });
 
-// Smooth scrolling for anchor links
+// Smooth scrolling
 document.querySelectorAll('a[href^="#"]').forEach(anchor => {
     anchor.addEventListener('click', function (e) {
         e.preventDefault();
-
         const targetId = this.getAttribute('href');
         if (targetId === '#') return;
-
         const targetElement = document.querySelector(targetId);
         if (targetElement) {
-            targetElement.scrollIntoView({
-                behavior: 'smooth'
-            });
+            targetElement.scrollIntoView({ behavior: 'smooth' });
         }
     });
 });
 
-// Hero Slideshow Functionality
+// Hero slideshow
 function initHeroSlideshow() {
     const slides = document.querySelectorAll('.hero-slideshow .slide');
-
     if (slides.length === 0) return;
 
     let currentSlide = 0;
-    let slideInterval;
 
     function showSlide(index) {
         slides.forEach(slide => slide.classList.remove('active'));
@@ -829,58 +603,16 @@ function initHeroSlideshow() {
 
     function nextSlide() {
         let nextIndex = currentSlide + 1;
-        if (nextIndex >= slides.length) {
-            nextIndex = 0;
-        }
+        if (nextIndex >= slides.length) nextIndex = 0;
         showSlide(nextIndex);
     }
 
-    function startSlideshow() {
-        slideInterval = setInterval(nextSlide, 4000);
-    }
-
-    function pauseSlideshow() {
-        clearInterval(slideInterval);
-    }
-
-    function resumeSlideshow() {
-        startSlideshow();
-    }
-
-    const heroSection = document.querySelector('.hero');
-    if (heroSection) {
-        heroSection.addEventListener('mouseenter', pauseSlideshow);
-        heroSection.addEventListener('mouseleave', resumeSlideshow);
-        heroSection.addEventListener('touchstart', pauseSlideshow);
-        heroSection.addEventListener('touchend', resumeSlideshow);
-    }
-
+    setInterval(nextSlide, 4000);
     showSlide(0);
-    startSlideshow();
 }
 
-// Initialize everything when DOM is loaded
+// Initialize everything
 document.addEventListener('DOMContentLoaded', function () {
     initImageSliders();
     initHeroSlideshow();
 });
-
-// Date formatting utility
-function formatDateForDisplay(dateString) {
-    if (!dateString) return '';
-
-    const date = new Date(dateString);
-    const options = { day: 'numeric', month: 'long', year: 'numeric' };
-    return date.toLocaleDateString('en-ZA', options);
-}
-
-// For the booking form (MM/DD/YYYY to DD Month YYYY)
-function formatFormDate(dateString) {
-    if (!dateString) return '';
-
-    // Parse the date from the form (MM/DD/YYYY)
-    const [month, day, year] = dateString.split('/');
-    const date = new Date(year, month - 1, day);
-    const options = { day: 'numeric', month: 'long', year: 'numeric' };
-    return date.toLocaleDateString('en-ZA', options);
-}
