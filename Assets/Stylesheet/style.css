@@ -1166,3 +1166,100 @@ footer {
         width: 200px;
     }
 }
+
+/* Booking Confirmation Styles - Matching Booking Confirmed Style */
+.booking-confirmation-style {
+    text-align: center;
+    padding: 30px 20px;
+    font-family: 'Montserrat', sans-serif;
+}
+
+.booking-confirmation-style .confirmation-icon {
+    font-size: 3rem;
+    color: #5e2c3e;
+    margin-bottom: 1rem;
+}
+
+.booking-confirmation-style h2 {
+    color: #5e2c3e;
+    margin-bottom: 1rem;
+    font-size: 1.5rem;
+    font-weight: 600;
+    font-family: 'Playfair Display', serif;
+}
+
+.booking-confirmation-style .confirmation-message {
+    margin-bottom: 2rem;
+    color: #666;
+    line-height: 1.5;
+}
+
+.booking-confirmation-style .booking-details {
+    border: 1px solid #e0e0e0;
+    padding: 20px;
+    border-radius: 8px;
+    margin: 20px 0;
+    text-align: left;
+}
+
+.booking-confirmation-style .booking-details h4 {
+    color: #5e2c3e;
+    margin-top: 0;
+    margin-bottom: 15px;
+    font-size: 1rem;
+    font-weight: 600;
+}
+
+.booking-confirmation-style .banking-details {
+    border: 1px solid #e0e0e0;
+    padding: 20px;
+    border-radius: 8px;
+    margin: 20px 0;
+    text-align: left;
+}
+
+.booking-confirmation-style .banking-details h4 {
+    color: #5e2c3e;
+    margin-top: 0;
+    margin-bottom: 15px;
+    font-size: 1rem;
+    font-weight: 600;
+}
+
+.booking-confirmation-style .next-steps {
+    margin: 25px 0;
+}
+
+.booking-confirmation-style .next-steps h4 {
+    color: #5e2c3e;
+    margin-bottom: 12px;
+    font-size: 1rem;
+    font-weight: 600;
+}
+
+.booking-confirmation-style .email-confirmation {
+    background: #f8f9fa;
+    padding: 15px;
+    border-radius: 6px;
+    margin: 20px 0;
+}
+
+.booking-confirmation-style .contact-info {
+    margin-top: 25px;
+    padding-top: 20px;
+    border-top: 1px solid #e0e0e0;
+}
+
+/* Updated Booking Form Styles */
+.booking-form-page[data-page="3"] {
+    background: white;
+    border-radius: 10px;
+    padding: 0;
+}
+
+.booking-form-page[data-page="3"] h3 {
+    text-align: center;
+    color: #5e2c3e;
+    margin-bottom: 1.5rem;
+    font-family: 'Playfair Display', serif;
+}

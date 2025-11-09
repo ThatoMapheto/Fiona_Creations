@@ -132,7 +132,7 @@ const bookDressBtn = document.querySelector('.book-dress-btn');
 
 // Store selected dress information
 let selectedDress = null;
-let isDressBooking = false; // NEW: Track if this is a dress-specific booking
+let isDressBooking = false;
 
 // Function to open modal with blur
 function openModal(modal) {
@@ -151,11 +151,10 @@ function resetBookingForm() {
     selectedDress = null;
     isDressBooking = false;
     document.getElementById('bookingForm').reset();
-    // Reset to appropriate step based on booking type
     if (isDressBooking) {
-        goToStep('2'); // Skip service selection for dress bookings
+        goToStep('2');
     } else {
-        goToStep('1'); // Start with service selection for general bookings
+        goToStep('1');
     }
 }
 
@@ -183,7 +182,7 @@ bookServiceBtns.forEach(btn => {
         openModal(bookingModal);
         const service = btn.getAttribute('data-service');
         document.getElementById('bookingService').value = service;
-        goToStep('2'); // Skip to details after service selection
+        goToStep('2');
     });
 });
 
@@ -254,10 +253,10 @@ function setupDressModal(buttons, isReadyToWear = false) {
 setupDressModal(document.querySelectorAll('.view-dress-btn'));
 setupDressModal(document.querySelectorAll('.get-this-look-btn'), true);
 
-// Book dress button in dress modal - UPDATED: Skip service selection
+// Book dress button in dress modal
 bookDressBtn.addEventListener('click', () => {
     closeModal(dressModal);
-    isDressBooking = true; // Mark as dress-specific booking
+    isDressBooking = true;
 
     // Reset form and open booking modal
     document.getElementById('bookingForm').reset();
@@ -270,7 +269,7 @@ bookDressBtn.addEventListener('click', () => {
 
     // Open booking modal and skip to details step
     openModal(bookingModal);
-    goToStep('2'); // Skip service selection, go directly to details
+    goToStep('2');
 });
 
 // Close modals
@@ -374,7 +373,7 @@ function goToStep(stepNumber) {
     }
 }
 
-// Enhanced booking summary with banking details
+// Updated booking summary with proper date formatting
 function updateBookingSummary() {
     const service = document.getElementById('bookingService').value;
     const name = document.getElementById('bookingName').value;
@@ -401,100 +400,196 @@ function updateBookingSummary() {
             serviceText = 'Service';
     }
 
+    // Format date properly
+    const formattedDate = date ? formatDateForDisplay(date) : '';
+
     // Add dress information if available
     let dressInfo = '';
     if (selectedDress) {
         dressInfo = `
-            <div style="background: #e8f5e9; padding: 15px; border-radius: 8px; margin: 15px 0;">
-                <h4 style="color: #2e7d32; margin-top: 0;">Selected Dress</h4>
-                <p><strong>Dress:</strong> ${selectedDress.name}</p>
-                <p><strong>Price:</strong> ${selectedDress.price}</p>
-                <p><strong>Type:</strong> ${selectedDress.type === 'ready-to-wear' ? 'Ready to Wear' : 'Rental'}</p>
+            <div style="background: #f8f9fa; padding: 15px; border-radius: 8px; margin: 15px 0;">
+                <h4 style="color: #5e2c3e; margin-top: 0; font-size: 1rem; font-weight: 600;">Selected Dress</h4>
+                <p style="margin: 8px 0; color: #333;"><strong>Dress:</strong> ${selectedDress.name}</p>
+                <p style="margin: 8px 0; color: #333;"><strong>Price:</strong> ${selectedDress.price}</p>
+                <p style="margin: 8px 0; color: #333;"><strong>Type:</strong> ${selectedDress.type === 'ready-to-wear' ? 'Ready to Wear' : 'Rental'}</p>
             </div>
         `;
     }
 
-    // Banking details section
-    const bankingDetails = `
-        <div style="background: #fff3cd; padding: 15px; border-radius: 8px; margin: 15px 0; border-left: 4px solid #ffc107;">
-            <h4 style="color: #856404; margin-top: 0;">💳 Payment Information</h4>
-            <p><strong>Bank:</strong> Capitec Business</p>
-            <p><strong>Account Name:</strong> Fiona Creations</p>
-            <p><strong>Account Number:</strong> 1053 5216 93</p>
-            <p style="font-size: 0.9rem; margin-top: 10px; color: #856404;">
-                <strong>Please use your name as reference when making payment.</strong>
-            </p>
-        </div>
-    `;
-
     const summaryHTML = `
-        <div style="background: #f8f8f8; padding: 20px; border-radius: 8px; margin-bottom: 1rem;">
-            <p><strong>Service:</strong> ${serviceText}</p>
-            ${dressInfo}
-            <div style="border-top: 1px solid #ddd; margin: 15px 0; padding-top: 15px;">
-                <p><strong>Customer Information</strong></p>
-                <p><strong>Name:</strong> ${name}</p>
-                <p><strong>Email:</strong> ${email}</p>
-                <p><strong>Phone:</strong> ${phone}</p>
-                ${date ? `<p><strong>Preferred Date:</strong> ${new Date(date).toLocaleDateString()}</p>` : ''}
-                ${notes ? `<p><strong>Special Requests:</strong> ${notes}</p>` : ''}
+        <div class="booking-confirmation-style">
+            <div class="confirmation-icon">✓</div>
+            <h2>Confirm Your Booking</h2>
+            
+            <div class="booking-details">
+                <h4>Service Details</h4>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; font-size: 0.9rem;">
+                    <div>
+                        <p style="margin: 6px 0; color: #666;">Service:</p>
+                        <p style="margin: 6px 0; color: #666;">Customer:</p>
+                        <p style="margin: 6px 0; color: #666;">Email:</p>
+                        <p style="margin: 6px 0; color: #666;">Phone:</p>
+                        ${formattedDate ? `<p style="margin: 6px 0; color: #666;">Preferred Date:</p>` : ''}
+                    </div>
+                    <div>
+                        <p style="margin: 6px 0; color: #333;">${serviceText}</p>
+                        <p style="margin: 6px 0; color: #333;">${name}</p>
+                        <p style="margin: 6px 0; color: #333;">${email}</p>
+                        <p style="margin: 6px 0; color: #333;">${phone}</p>
+                        ${formattedDate ? `<p style="margin: 6px 0; color: #333;">${formattedDate}</p>` : ''}
+                    </div>
+                </div>
+                ${dressInfo}
+                ${notes ? `<div style="margin-top: 15px; padding-top: 15px; border-top: 1px solid #e0e0e0;">
+                    <p style="margin: 8px 0; color: #333;"><strong>Special Requests:</strong> ${notes}</p>
+                </div>` : ''}
             </div>
-            ${bankingDetails}
+
+            <div class="banking-details">
+                <h4>Payment Information</h4>
+                <div style="font-size: 0.9rem;">
+                    <p style="margin: 8px 0;"><strong>Bank:</strong> Capitec Business</p>
+                    <p style="margin: 8px 0;"><strong>Account:</strong> Fiona Creations</p>
+                    <p style="margin: 8px 0;"><strong>Number:</strong> 1053 5216 93</p>
+                </div>
+                <p style="color: #666; font-size: 0.85rem; margin: 15px 0 0 0; font-style: italic;">
+                    Please use your name as reference when making payment
+                </p>
+            </div>
+
+            <div class="next-steps">
+                <h4>What happens next</h4>
+                <div style="font-size: 0.9rem; color: #666; line-height: 1.6;">
+                    <p style="margin: 8px 0;">• Fiona will contact you within 24 hours</p>
+                    <p style="margin: 8px 0;">• Consultation and fitting arrangements</p>
+                    <p style="margin: 8px 0;">• Payment confirmation</p>
+                </div>
+            </div>
+
+            <div class="email-confirmation">
+                <p style="margin: 0; color: #666; font-size: 0.9rem;">
+                    A confirmation email will be sent to <strong>${email}</strong>
+                </p>
+            </div>
+
+            <div class="contact-info">
+                <p style="margin: 5px 0; color: #666; font-size: 0.85rem;">
+                    Questions? Contact Fiona directly
+                </p>
+                <p style="margin: 8px 0;">
+                    <a href="mailto:fionacreations21@gmail.com" style="color: #5e2c3e; text-decoration: none; font-size: 0.9rem;">
+                        fionacreations21@gmail.com
+                    </a>
+                </p>
+            </div>
         </div>
-        <p style="color: #5e2c3e; font-weight: bold;">Click "Confirm Booking" to complete your reservation</p>
     `;
 
     document.getElementById('bookingSummary').innerHTML = summaryHTML;
-
-    console.log('Booking summary updated. Selected dress:', selectedDress);
 }
 
-// Enhanced success modal with banking details
+// UPDATED SUCCESS MODAL - Only shows on actual success
 function showSuccessWithBankingDetails(bookingData, result) {
-    let successMessage = `
-        <div style="text-align: center;">
-            <div style="font-size: 4rem; color: #28a745; margin-bottom: 1rem;">✅</div>
-            <h2 style="color: #5e2c3e; margin-bottom: 1rem;">Booking Confirmed!</h2>
-            <p style="margin-bottom: 1.5rem; font-size: 1.1rem;">
-                Thank you! Your booking <strong>#${result.bookingId}</strong> has been received.
-            </p>
-    `;
+    // Format date properly
+    const formattedDate = bookingData.date ? formatDateForDisplay(bookingData.date) : '';
 
-    if (result.dressName) {
-        successMessage += `
-            <div style="background: #e8f5e9; padding: 15px; border-radius: 8px; margin: 15px 0;">
-                <h4 style="color: #2e7d32; margin-top: 0;">Your Selection</h4>
-                <p><strong>Dress:</strong> ${result.dressName}</p>
-                ${result.dressPrice ? `<p><strong>Price:</strong> ${result.dressPrice}</p>` : ''}
-                ${result.orderTotal && result.orderTotal > 0 ? `<p><strong>Total Amount:</strong> R${result.orderTotal}</p>` : ''}
-            </div>
-        `;
-    }
-
-    successMessage += `
-        <div style="background: #d1ecf1; padding: 20px; border-radius: 8px; margin: 20px 0; text-align: left;">
-            <h4 style="color: #0c5460; margin-top: 0;">💰 Payment Instructions</h4>
-            <p><strong>Please make payment to:</strong></p>
-            <div style="background: white; padding: 15px; border-radius: 5px; margin: 10px 0;">
-                <p><strong>Bank:</strong> Capitec Business</p>
-                <p><strong>Account Name:</strong> Fiona Creations</p>
-                <p><strong>Account Number:</strong> 1053 5216 93</p>
-                <p><strong>Reference:</strong> ${result.bookingId} or your name</p>
-            </div>
-            <p style="color: #0c5460; font-size: 0.9rem;">
-                <strong>📞 Next Steps:</strong> Fiona will contact you within 24 hours to confirm your booking details and discuss delivery/collection.
+    const successMessage = `
+        <div style="text-align: center; padding: 30px 20px;">
+            <!-- Simple Checkmark -->
+            <div style="font-size: 3rem; color: #5e2c3e; margin-bottom: 1rem;">✓</div>
+            
+            <!-- Clean Title -->
+            <h2 style="color: #5e2c3e; margin-bottom: 1rem; font-size: 1.5rem; font-weight: 600; font-family: 'Playfair Display', serif;">
+                Booking Confirmed!
+            </h2>
+            
+            <!-- Simple Message -->
+            <p style="margin-bottom: 2rem; color: #666; line-height: 1.5;">
+                Thank you, <strong>${bookingData.name}</strong>. Your booking <strong>#${result.bookingId}</strong> has been received.
             </p>
+
+            <!-- Minimal Booking Details -->
+            <div style="border: 1px solid #e0e0e0; padding: 20px; border-radius: 8px; margin: 20px 0; text-align: left;">
+                <h4 style="color: #5e2c3e; margin-top: 0; margin-bottom: 15px; font-size: 1rem; font-weight: 600;">Booking Details</h4>
+                
+                ${bookingData.dress ? `
+                <div style="margin-bottom: 15px;">
+                    <p style="margin: 8px 0; color: #333;"><strong>Dress:</strong> ${bookingData.dress.name}</p>
+                    ${bookingData.dress.price ? `<p style="margin: 8px 0; color: #333;"><strong>Price:</strong> ${bookingData.dress.price}</p>` : ''}
+                </div>
+                ` : ''}
+                
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; font-size: 0.9rem;">
+                    <div>
+                        <p style="margin: 6px 0; color: #666;">Service:</p>
+                        <p style="margin: 6px 0; color: #666;">Reference:</p>
+                        ${formattedDate ? `<p style="margin: 6px 0; color: #666;">Preferred Date:</p>` : ''}
+                    </div>
+                    <div>
+                        <p style="margin: 6px 0; color: #333;">${result.serviceName || bookingData.service || 'Consultation'}</p>
+                        <p style="margin: 6px 0; color: #333;">#${result.bookingId}</p>
+                        ${formattedDate ? `<p style="margin: 6px 0; color: #333;">${formattedDate}</p>` : ''}
+                    </div>
+                </div>
+            </div>
+
+            <!-- Clean Payment Information -->
+            <div style="border: 1px solid #e0e0e0; padding: 20px; border-radius: 8px; margin: 20px 0; text-align: left;">
+                <h4 style="color: #5e2c3e; margin-top: 0; margin-bottom: 15px; font-size: 1rem; font-weight: 600;">Payment Details</h4>
+                
+                <div style="font-size: 0.9rem;">
+                    <p style="margin: 8px 0;"><strong>Bank:</strong> Capitec Business</p>
+                    <p style="margin: 8px 0;"><strong>Account:</strong> Fiona Creations</p>
+                    <p style="margin: 8px 0;"><strong>Number:</strong> 1053 5216 93</p>
+                    <p style="margin: 8px 0;"><strong>Reference:</strong> ${result.bookingId}</p>
+                </div>
+                
+                <p style="color: #666; font-size: 0.85rem; margin: 15px 0 0 0; font-style: italic;">
+                    Please use your booking reference when making payment
+                </p>
+            </div>
+
+            <!-- Simple Next Steps -->
+            <div style="margin: 25px 0;">
+                <h4 style="color: #5e2c3e; margin-bottom: 12px; font-size: 1rem; font-weight: 600;">What happens next</h4>
+                <div style="font-size: 0.9rem; color: #666; line-height: 1.6;">
+                    <p style="margin: 8px 0;">• Fiona will contact you within 24 hours</p>
+                    <p style="margin: 8px 0;">• Consultation and fitting arrangements</p>
+                    <p style="margin: 8px 0;">• Payment confirmation</p>
+                </div>
+            </div>
+
+            <!-- Email Confirmation -->
+            <div style="background: #f8f9fa; padding: 15px; border-radius: 6px; margin: 20px 0;">
+                <p style="margin: 0; color: #666; font-size: 0.9rem;">
+                    A confirmation email has been sent to <strong>${bookingData.email}</strong>
+                </p>
+            </div>
+
+            <!-- Contact Information -->
+            <div style="margin-top: 25px; padding-top: 20px; border-top: 1px solid #e0e0e0;">
+                <p style="margin: 5px 0; color: #666; font-size: 0.85rem;">
+                    Questions? Contact Fiona directly
+                </p>
+                <p style="margin: 8px 0;">
+                    <a href="mailto:fionacreations21@gmail.com" style="color: #5e2c3e; text-decoration: none; font-size: 0.9rem;">
+                        fionacreations21@gmail.com
+                    </a>
+                </p>
+                <p style="margin: 8px 0;">
+                    <a href="tel:0643739810" style="color: #5e2c3e; text-decoration: none; font-size: 0.9rem;">
+                        064 373 9810
+                    </a>
+                </p>
+            </div>
         </div>
-        <p style="color: #6c757d; font-size: 0.9rem;">
-            A confirmation email has been sent to ${bookingData.email} with these details.
-        </p>
     `;
 
     document.getElementById('successMessage').innerHTML = successMessage;
     openModal(successModal);
 }
 
-// Update the API booking function to use the new success modal
+// Updated API booking function with proper error handling
 async function submitBooking(bookingData) {
     try {
         console.log('Sending booking data to API:', JSON.stringify(bookingData, null, 2));
@@ -510,42 +605,49 @@ async function submitBooking(bookingData) {
         const result = await response.json();
         console.log('API response:', result);
 
-        if (result.success) {
-            // Show success message with banking details
-            let successMsg = `✅ Booking received! Your reference: ${result.bookingId}`;
-            if (result.dressName) {
-                successMsg += `\n\nDress: ${result.dressName}`;
-                if (result.dressPrice) {
-                    successMsg += `\nPrice: ${result.dressPrice}`;
-                }
-            }
-            if (result.orderTotal && result.orderTotal > 0) {
-                successMsg += `\nTotal: R${result.orderTotal}`;
-            }
-            successMsg += `\n\nPayment Details:\nBank: Capitec Business\nAccount: 1053 5216 93\nReference: ${result.bookingId}`;
-            successMsg += `\n\nFiona will contact you within 24 hours.`;
-
-            alert(successMsg);
-
-            // Close modal if open
+        if (response.ok && result.success) {
+            // Close booking modal
             closeModal(bookingModal);
 
-            // Show enhanced success modal with banking details
+            // Show professional success modal
             showSuccessWithBankingDetails(bookingData, result);
 
             return true;
         } else {
-            alert('❌ Booking failed: ' + (result.message || result.error));
+            // Show proper error modal
+            showErrorModal('Booking Failed', result.message || result.error || 'There was an issue processing your booking. Please try again.');
             return false;
         }
     } catch (error) {
         console.error('Error:', error);
-        alert('❌ Network error. Please try again or contact Fiona directly at 064 373 9810');
+        showErrorModal(
+            'Connection Error',
+            'Unable to process your booking at this time. Please try again or contact Fiona directly at 064 373 9810.'
+        );
         return false;
     }
 }
 
-// FIXED: Enhanced booking form submission
+// PROPER ERROR MODAL - Completely different from success
+function showErrorModal(title, message) {
+    const errorHTML = `
+        <div style="text-align: center; padding: 30px 20px;">
+            <div style="font-size: 3rem; color: #dc3545; margin-bottom: 1rem;">✗</div>
+            <h2 style="color: #dc3545; margin-bottom: 1rem; font-size: 1.5rem; font-weight: 600; font-family: 'Playfair Display', serif;">
+                ${title}
+            </h2>
+            <p style="color: #666; line-height: 1.5; margin-bottom: 2rem;">${message}</p>
+            <button class="btn" onclick="closeModal(successModal)" style="background: #dc3545; border-color: #dc3545;">
+                Try Again
+            </button>
+        </div>
+    `;
+
+    document.getElementById('successMessage').innerHTML = errorHTML;
+    openModal(successModal);
+}
+
+// Enhanced booking form submission
 document.getElementById('bookingForm').addEventListener('submit', async (e) => {
     e.preventDefault();
 
@@ -559,31 +661,26 @@ document.getElementById('bookingForm').addEventListener('submit', async (e) => {
         notes: document.getElementById('bookingNotes').value
     };
 
-    // CRITICAL FIX: Add dress information if available
+    // Add dress information if available
     if (selectedDress) {
         formData.dress = {
             name: selectedDress.name,
             price: selectedDress.price,
             type: selectedDress.type
         };
-
-        console.log('Dress data added to formData:', formData.dress);
     }
 
     // Validate required fields
     if (!formData.name || !formData.email || !formData.phone) {
-        alert('Please fill in all required fields: Name, Email, and Phone.');
+        showErrorModal('Missing Information', 'Please fill in all required fields: Name, Email, and Phone.');
         return;
     }
-
-    // Debug: Show what's being sent
-    console.log('Final form data being submitted:', JSON.stringify(formData, null, 2));
 
     try {
         // Show loading state
         const submitBtn = document.querySelector('#bookingForm button[type="submit"]');
         const originalText = submitBtn.textContent;
-        submitBtn.textContent = 'Booking...';
+        submitBtn.textContent = 'Processing...';
         submitBtn.disabled = true;
 
         // Submit via API
@@ -599,8 +696,11 @@ document.getElementById('bookingForm').addEventListener('submit', async (e) => {
         submitBtn.disabled = false;
 
     } catch (error) {
-        alert('There was an error processing your booking. Please try again or contact us directly at fionacreations21@gmail.com');
         console.error('Booking error:', error);
+        showErrorModal(
+            'Unexpected Error',
+            'There was an unexpected error processing your booking. Please contact us directly at fionacreations21@gmail.com'
+        );
 
         // Reset button state
         const submitBtn = document.querySelector('#bookingForm button[type="submit"]');
@@ -624,29 +724,28 @@ document.getElementById('contactForm').addEventListener('submit', async (e) => {
 
     // Validate required fields
     if (!formData.name || !formData.email || !formData.message) {
-        alert('Please fill in all required fields: Name, Email, and Message.');
+        showErrorModal('Missing Information', 'Please fill in all required fields: Name, Email, and Message.');
         return;
     }
 
-    const subject = `📧 Website Inquiry - ${formData.name}`;
+    const subject = `Website Inquiry - ${formData.name}`;
     const body = `
-NEW INQUIRY FROM FIONA CREATIONS WEBSITE%0D%0A
-=============================================%0D%0A%0D%0A
+NEW INQUIRY FROM FIONA CREATIONS WEBSITE
 
-CONTACT DETAILS:%0D%0A
-- Name: ${formData.name}%0D%0A
-- Email: ${formData.email}%0D%0A
-- Phone: ${formData.phone || 'Not provided'}%0D%0A%0D%0A
+CONTACT DETAILS:
+- Name: ${formData.name}
+- Email: ${formData.email}
+- Phone: ${formData.phone || 'Not provided'}
 
-SERVICE INTEREST:%0D%0A
-- ${formData.service || 'Not specified'}%0D%0A%0D%0A
+SERVICE INTEREST:
+- ${formData.service || 'Not specified'}
 
-MESSAGE:%0D%0A
-${formData.message}%0D%0A%0D%0A
+MESSAGE:
+${formData.message}
 
-ADDITIONAL INFORMATION:%0D%0A
-- Submitted: ${new Date().toLocaleString('en-ZA', { timeZone: 'Africa/Johannesburg' })}%0D%0A
-- Type: General Inquiry%0D%0A
+ADDITIONAL INFORMATION:
+- Submitted: ${new Date().toLocaleString('en-ZA', { timeZone: 'Africa/Johannesburg' })}
+- Type: General Inquiry
     `.trim();
 
     try {
@@ -658,7 +757,24 @@ ADDITIONAL INFORMATION:%0D%0A
 
         window.open(`mailto:fionacreations21@gmail.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`, '_blank');
 
-        document.getElementById('successMessage').textContent = `Thank you ${formData.name}! Your message has been sent to Fiona Creations. We will get back to you shortly.`;
+        // Show success message for contact form
+        // In the contact form submit handler, replace the success section with:
+        const contactSuccessHTML = `
+    <div style="text-align: center; padding: 30px 20px;">
+        <div style="font-size: 3rem; color: #5e2c3e; margin-bottom: 1rem;">✓</div>
+        <h2 style="color: #5e2c3e; margin-bottom: 1rem; font-size: 1.5rem; font-weight: 600; font-family: 'Playfair Display', serif;">
+            Message Sent
+        </h2>
+        <p style="color: #666; line-height: 1.5; margin-bottom: 1rem;">
+            Thank you, <strong>${formData.name}</strong>. Your message has been sent to Fiona Creations.
+        </p>
+        <p style="color: #666; font-size: 0.9rem;">
+            We will get back to you within 24 hours.
+        </p>
+    </div>
+`;
+
+        document.getElementById('successMessage').innerHTML = contactSuccessHTML;
         openModal(successModal);
         document.getElementById('contactForm').reset();
 
@@ -667,7 +783,10 @@ ADDITIONAL INFORMATION:%0D%0A
         submitBtn.disabled = false;
 
     } catch (error) {
-        alert('There was an error sending your message. Please try again or contact us directly at fionacreations21@gmail.com');
+        showErrorModal(
+            'Message Failed',
+            'There was an error sending your message. Please try again or contact us directly at fionacreations21@gmail.com'
+        );
 
         // Reset button state
         const submitBtn = document.querySelector('#contactForm button[type="submit"]');
@@ -745,3 +864,23 @@ document.addEventListener('DOMContentLoaded', function () {
     initImageSliders();
     initHeroSlideshow();
 });
+
+// Date formatting utility
+function formatDateForDisplay(dateString) {
+    if (!dateString) return '';
+
+    const date = new Date(dateString);
+    const options = { day: 'numeric', month: 'long', year: 'numeric' };
+    return date.toLocaleDateString('en-ZA', options);
+}
+
+// For the booking form (MM/DD/YYYY to DD Month YYYY)
+function formatFormDate(dateString) {
+    if (!dateString) return '';
+
+    // Parse the date from the form (MM/DD/YYYY)
+    const [month, day, year] = dateString.split('/');
+    const date = new Date(year, month - 1, day);
+    const options = { day: 'numeric', month: 'long', year: 'numeric' };
+    return date.toLocaleDateString('en-ZA', options);
+}
