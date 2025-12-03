@@ -158,6 +158,12 @@ bookDressBtn.addEventListener('click', () => {
     isDressBooking = true;
     document.getElementById('bookingForm').reset();
     document.getElementById('bookingService').value = selectedDress.type === 'ready-to-wear' ? 'ready-to-wear' : 'rental';
+
+    // Initialize calendar for rental dresses
+    if (selectedDress.type === 'rental') {
+        initializeCalendarWithUnavailableDates(selectedDress.name);
+    }
+
     openModal(bookingModal);
     goToStep('2');
 });
@@ -340,26 +346,110 @@ function updateBookingSummary() {
     document.getElementById('bookingSummary').innerHTML = summaryHTML;
 }
 
-// API functions
+// Check if a specific dress is available on a specific date
+async function checkDressAvailability(dressName, date) {
+    try {
+        console.log('🔍 Checking availability for:', dressName, 'on', date);
+        const response = await fetch(`${API_URL}?dress=${encodeURIComponent(dressName)}&date=${encodeURIComponent(date)}`, {
+            method: 'GET',
+            headers: { 'Content-Type': 'application/json' }
+        });
+
+        const result = await response.json();
+        console.log('🔍 Availability check result:', result);
+        return result.available !== false;
+    } catch (error) {
+        console.error('❌ Error checking availability:', error);
+        return true; // Default to available
+    }
+}
+
+// Get all booked dates for a dress in a month
+async function getBookedDatesForMonth(dressName, year, month) {
+    try {
+        const monthStr = `${year}-${String(month).padStart(2, '0')}`;
+        const response = await fetch(`${API_URL}?dress=${encodeURIComponent(dressName)}&month=${monthStr}`, {
+            method: 'GET',
+            headers: { 'Content-Type': 'application/json' }
+        });
+
+        const result = await response.json();
+        console.log('🔍 Booked dates result:', result);
+        return result.bookedDates || [];
+    } catch (error) {
+        console.error('❌ Error getting booked dates:', error);
+        return [];
+    }
+}
+
+// Initialize calendar with unavailable dates
+async function initializeCalendarWithUnavailableDates(dressName) {
+    if (!dressName) return;
+
+    const today = new Date();
+    const currentYear = today.getFullYear();
+    const currentMonth = today.getMonth() + 1;
+
+    // Get booked dates for the current month
+    const bookedDates = await getBookedDatesForMonth(dressName, currentYear, currentMonth);
+
+    console.log('🔍 Booked dates for calendar:', bookedDates);
+
+    // Update your date picker to disable booked dates
+    const dateInput = document.getElementById('bookingDate');
+    if (dateInput && bookedDates.length > 0) {
+        // Add min date (today)
+        const todayStr = today.toISOString().split('T')[0];
+        dateInput.min = todayStr;
+
+        // Check availability when date is selected
+        dateInput.addEventListener('change', async function () {
+            if (this.value && dressName) {
+                console.log('🔍 Date selected:', this.value);
+                const isAvailable = await checkDressAvailability(dressName, this.value);
+                if (!isAvailable) {
+                    console.log('❌ Date unavailable, clearing selection');
+                    this.value = '';
+                    showErrorModal('Date Unavailable',
+                        `The dress "${dressName}" is already booked on ${formatDateForDisplay(this.value)}. Please select another date.`);
+                } else {
+                    console.log('✅ Date available');
+                }
+            }
+        });
+    }
+}
+
+// API functions with debug logs
 async function submitBooking(bookingData) {
     try {
+        console.log('🔍 DEBUG: Sending booking to API:', bookingData);
+
         const response = await fetch(API_URL, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(bookingData)
         });
 
+        console.log('🔍 DEBUG: API Response status:', response.status);
+        console.log('🔍 DEBUG: API Response ok:', response.ok);
+
         const result = await response.json();
+        console.log('🔍 DEBUG: Full API response:', result);
 
         if (response.ok && result.success) {
+            console.log('✅ DEBUG: Booking successful');
             closeModal(bookingModal);
             showSuccessWithBankingDetails(bookingData, result);
             return true;
         } else {
-            showErrorModal('Booking Failed', result.message || result.error || 'There was an issue processing your booking.');
+            console.log('❌ DEBUG: Booking failed:', result.error || result.message);
+            const errorMessage = result.error || result.message || 'There was an issue processing your booking.';
+            showErrorModal('Booking Failed', errorMessage);
             return false;
         }
     } catch (error) {
+        console.error('❌ DEBUG: Network error:', error);
         showErrorModal('Connection Error', 'Unable to process your booking. Please try again or contact Fiona directly.');
         return false;
     }
@@ -470,6 +560,8 @@ function showErrorModal(title, message) {
 document.getElementById('bookingForm').addEventListener('submit', async (e) => {
     e.preventDefault();
 
+    console.log('🔍 DEBUG: Form submission started');
+
     const formData = {
         service: document.getElementById('bookingService').value,
         name: document.getElementById('bookingName').value,
@@ -485,9 +577,26 @@ document.getElementById('bookingForm').addEventListener('submit', async (e) => {
             price: selectedDress.price,
             type: selectedDress.type
         };
+
+        // Check availability before submitting if date is selected (for rental dresses only)
+        if (formData.date && selectedDress.type === 'rental') {
+            console.log('🔍 DEBUG: Checking dress availability for rental...');
+            const isAvailable = await checkDressAvailability(selectedDress.name, formData.date);
+
+            if (!isAvailable) {
+                console.log('❌ DEBUG: Dress not available on selected date');
+                showErrorModal('Dress Not Available',
+                    `The dress "${selectedDress.name}" is already booked on ${formatDateForDisplay(formData.date)}. Please select another date.`);
+                return;
+            }
+            console.log('✅ DEBUG: Dress is available');
+        }
     }
 
+    console.log('🔍 DEBUG: Form data prepared:', formData);
+
     if (!formData.name || !formData.email || !formData.phone) {
+        console.log('❌ DEBUG: Missing required fields');
         showErrorModal('Missing Information', 'Please fill in all required fields: Name, Email, and Phone.');
         return;
     }
@@ -499,13 +608,22 @@ document.getElementById('bookingForm').addEventListener('submit', async (e) => {
 
     try {
         const success = await submitBooking(formData);
-        if (success) resetBookingForm();
-    } catch (error) {
-        showErrorModal('Unexpected Error', 'There was an unexpected error. Please contact us directly.');
-    }
+        console.log('🔍 DEBUG: submitBooking returned:', success);
 
-    submitBtn.textContent = originalText;
-    submitBtn.disabled = false;
+        if (success) {
+            console.log('✅ DEBUG: Success, resetting form');
+            resetBookingForm();
+        } else {
+            console.log('❌ DEBUG: Booking failed, keeping form data for correction');
+        }
+    } catch (error) {
+        console.error('❌ DEBUG: Unexpected error in form submission:', error);
+        showErrorModal('Unexpected Error', 'There was an unexpected error. Please contact us directly.');
+    } finally {
+        submitBtn.textContent = originalText;
+        submitBtn.disabled = false;
+        console.log('🔍 DEBUG: Form submission process completed');
+    }
 });
 
 // Contact form
@@ -616,147 +734,3 @@ document.addEventListener('DOMContentLoaded', function () {
     initImageSliders();
     initHeroSlideshow();
 });
-
-// Check if a specific dress is available on a specific date
-async function checkDressAvailability(dressName, date) {
-    try {
-        const response = await fetch(`${API_URL}?dress=${encodeURIComponent(dressName)}&date=${encodeURIComponent(date)}`, {
-            method: 'GET',
-            headers: { 'Content-Type': 'application/json' }
-        });
-
-        const result = await response.json();
-        console.log('Availability check result:', result);
-        return result.available !== false;
-    } catch (error) {
-        console.error('Error checking availability:', error);
-        return true; // Default to available
-    }
-}
-
-// Get all booked dates for a dress in a month
-async function getBookedDatesForMonth(dressName, year, month) {
-    try {
-        const monthStr = `${year}-${String(month).padStart(2, '0')}`;
-        const response = await fetch(`${API_URL}?dress=${encodeURIComponent(dressName)}&month=${monthStr}`, {
-            method: 'GET',
-            headers: { 'Content-Type': 'application/json' }
-        });
-
-        const result = await response.json();
-        console.log('Booked dates result:', result);
-        return result.bookedDates || [];
-    } catch (error) {
-        console.error('Error getting booked dates:', error);
-        return [];
-    }
-}
-
-// Update form submission to check availability
-document.getElementById('bookingForm').addEventListener('submit', async (e) => {
-    e.preventDefault();
-
-    console.log('🔍 DEBUG: Form submission started');
-
-    const formData = {
-        service: document.getElementById('bookingService').value,
-        name: document.getElementById('bookingName').value,
-        email: document.getElementById('bookingEmail').value,
-        phone: document.getElementById('bookingPhone').value,
-        date: document.getElementById('bookingDate').value,
-        notes: document.getElementById('bookingNotes').value
-    };
-
-    if (selectedDress) {
-        formData.dress = {
-            name: selectedDress.name,
-            price: selectedDress.price,
-            type: selectedDress.type
-        };
-
-        // Check availability before submitting if date is selected
-        if (formData.date && selectedDress.type === 'rental') {
-            console.log('🔍 DEBUG: Checking dress availability...');
-            const isAvailable = await checkDressAvailability(selectedDress.name, formData.date);
-
-            if (!isAvailable) {
-                console.log('❌ DEBUG: Dress not available on selected date');
-                showErrorModal('Dress Not Available',
-                    `The dress "${selectedDress.name}" is already booked on ${formatDateForDisplay(formData.date)}. Please select another date.`);
-                return;
-            }
-            console.log('✅ DEBUG: Dress is available');
-        }
-    }
-
-    console.log('🔍 DEBUG: Form data prepared:', formData);
-
-    if (!formData.name || !formData.email || !formData.phone) {
-        console.log('❌ DEBUG: Missing required fields');
-        showErrorModal('Missing Information', 'Please fill in all required fields: Name, Email, and Phone.');
-        return;
-    }
-
-    const submitBtn = document.querySelector('#bookingForm button[type="submit"]');
-    const originalText = submitBtn.textContent;
-    submitBtn.textContent = 'Processing...';
-    submitBtn.disabled = true;
-
-    try {
-        const success = await submitBooking(formData);
-        console.log('🔍 DEBUG: submitBooking returned:', success);
-
-        if (success) {
-            console.log('✅ DEBUG: Success, resetting form');
-            resetBookingForm();
-        } else {
-            console.log('❌ DEBUG: Booking failed, keeping form data for correction');
-        }
-    } catch (error) {
-        console.error('❌ DEBUG: Unexpected error in form submission:', error);
-        showErrorModal('Unexpected Error', 'There was an unexpected error. Please contact us directly.');
-    } finally {
-        submitBtn.textContent = originalText;
-        submitBtn.disabled = false;
-        console.log('🔍 DEBUG: Form submission process completed');
-    }
-});
-
-// Initialize calendar with unavailable dates
-async function initializeCalendarWithUnavailableDates(dressName) {
-    if (!dressName) return;
-
-    const today = new Date();
-    const currentYear = today.getFullYear();
-    const currentMonth = today.getMonth() + 1;
-
-    // Get booked dates for the current month
-    const bookedDates = await getBookedDatesForMonth(dressName, currentYear, currentMonth);
-
-    console.log('Booked dates for calendar:', bookedDates);
-
-    // Update your date picker to disable booked dates
-    // Example with HTML5 date input (simplified):
-    const dateInput = document.getElementById('bookingDate');
-    if (dateInput && bookedDates.length > 0) {
-        // You would typically use a date picker library like Flatpickr
-        // Here's a conceptual example:
-        dateInput.addEventListener('change', async function () {
-            if (this.value && dressName) {
-                const isAvailable = await checkDressAvailability(dressName, this.value);
-                if (!isAvailable) {
-                    this.value = '';
-                    showErrorModal('Date Unavailable',
-                        `The dress "${dressName}" is already booked on ${formatDateForDisplay(this.value)}. Please select another date.`);
-                }
-            }
-        });
-    }
-}
-
-// Call this when a dress is selected
-function onDressSelected(dressName, isRental) {
-    if (isRental) {
-        initializeCalendarWithUnavailableDates(dressName);
-    }
-}
